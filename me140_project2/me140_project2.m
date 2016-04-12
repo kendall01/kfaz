@@ -4,6 +4,7 @@
 
 
 % hi my name is Frankie
+% added second useless comment
 
 clc;
 clear all;
