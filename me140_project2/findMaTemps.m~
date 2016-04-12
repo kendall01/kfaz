@@ -7,7 +7,9 @@ function [ T,T0,Ma,U,k ] = findMaTemps( mdot,A,Tm,P0,RF )
 % INPUT: Accepts scalar or vector inputs. Vector inputs for a two state
 % system consisting of state a and state b should be entered as column
 % vectors as illustrated: findMaTemps([mdot_a; mdot_b], [A_a; A_b], [Tm_a;
-% Tm_b], [P0_a; P0_b], [RF_a; RF_b])
+% Tm_b], [P0_a; P0_b
+
+%final
 
 error = 0.01;
 R = 287;
@@ -23,6 +25,8 @@ while abs(T0-T0guess)>error;
     MFP = (mdot./A).*sqrt(R.*T0guess)./P0;
 
     % (c) Determine Ma that satisfies Eq. (2)
+    % Solve coded to work with a matrix of MFP entered. Not tested with
+    % matrix of k values.
     M = sym('m',[length(MFP),1]);
     assume(M, 'real');
     assumeAlso(M < 1); %Select the subsonic solution. Set M > 1 if want supersonic solution.
