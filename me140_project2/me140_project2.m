@@ -86,6 +86,8 @@ P03 = (me140_project2_data(9)'+101.3).*1000;    % P03 [absolute] [Pa]
 T3m = me140_project2_data(3)';                   % T3m, cross-flow 
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
 
+% kendall test 
+
 % Station 4 (before bend to turbine inlet)
 P4 = me140_project2_data(10)+101.3;             % P4 (static) [absolute] 
 P04_guess = P4;                                 % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
