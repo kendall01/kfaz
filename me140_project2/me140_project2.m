@@ -2,9 +2,7 @@
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
 
-
-% hi my name is Frankie
-% added second useless comment
+% frankie test
 
 clc;
 clear all;
