@@ -6,7 +6,7 @@ function [ T,T0,Ma,U,k ] = findMaTemps( mdot,A,Tm,P0,RF )
 % NOTE: Approach from ME140 Lecture 3 page 20
 
 
-%FRANKIE
+%FRANKIE2
 
 error = 0.01;
 R = 287;
