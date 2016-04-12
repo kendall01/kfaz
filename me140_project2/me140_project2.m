@@ -1,6 +1,7 @@
 % ME 140 PROJECT 2: SR30 TURBOJET ENGINE
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
+
 clc;
 clear all;
 clearvars;
@@ -11,7 +12,7 @@ rho2 = 0.074887*(1/12)^3; % [lb/in^3]
 RFcross = .68; %Reference Factor cross-section
 RFaxial = .86; %Reference Factor axial
 R = 287; 
-Patmosphere = 101.3;
+Patm = 101.3;
 
 % Areas [in^2]
 A1 = 27.3; % Flow area at inlet of bellmouth
@@ -23,7 +24,7 @@ A8 = 3.87; % Area of nozzle exit
 
 % CALCULATIONS:
 % -------------
-rpm = me140_project2_data(1);
+rpm = me140_project2_data(1)';
 mdot_fuel = me140_project2_data(13).*1000;              % mdot_fuel,[g/s]
 Fthrust_meas = me140_project2_data(14).*4.44822;        % Fthrust, [N]
 Toil = me140_project2_data(7);
@@ -50,14 +51,19 @@ Toil = me140_project2_data(7);
 % function, but ok to initialize as Cp(Tm)
 
 % Station 2 (still need to get gamma at T2m since can't assume constant specific heat)
-dP2 = me140_project2_data(8);                   % dP2 = Pstag - Pstatic 
-P02 = Patmosphere;                              % P02 = P01 [ASSUME: isentropic from 0->2]
+dP2 = me140_project2_data(8)';                   % dP2 = Pstag - Pstatic 
+P02 = linspace(Patm, Patm, length(rpm))';       % P02 = P01 [ASSUME: isentropic from 0->2]
 P2 = P02 - dP2;                                 % P2 [absolute] 
 T2m = me140_project2_data(2);                   % T2m, cross-flow
-k2 = sp_heats(T2m);
+k2 = sp_heats(T2m)';
 
-syms M2
-Ma2 = solve(P02/P2 ==(1+ M2^2*((k2-1)/2))^(k2/(k2-1)), M2); % Solve for Ma2 [ASSUME: isentropic from 0->2]
+M2 = sym('m',[length(rpm),1]);
+assume(M2, 'real');
+assumeAlso(M2 > 0); %Select the subsonic solution. Set M > 1 if want supersonic solution.
+Ma2 = vpasolve(P02./P2 ==(1+ M2.^2.*((k2-1)./2)).^(k2./(k2-1)), M2); % Solve for Ma2 [ASSUME: isentropic from 0->2]
+Ma2 = struct(Ma2);
+Ma2 = struct2array(Ma2)'; %Ma is returned as a symbolic variable which doesn't work in polyval in sp_heats
+Ma2 = abs(Ma2);     %This seems kind of sketchy, but looking at the results seems reasonable. Tested positive solution and it is valid, given M2 is squared in all terms.
 T2  = recoveryFactor(T2m,Ma2,RFcross);
 T02 = T2*(1 + (Ma2^2)*((k-1)/2));
 U2 = Ma2*sqrt(k*R*T2);

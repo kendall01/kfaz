@@ -23,8 +23,6 @@ while abs(T0-T0guess)>error;
     MFP = (mdot./A).*sqrt(R.*T0guess)./P0;
 
     % (c) Determine Ma that satisfies Eq. (2)
-    % Solve coded to work with a matrix of MFP entered. Not tested with
-    % matrix of k values.
     M = sym('m',[length(MFP),1]);
     assume(M, 'real');
     assumeAlso(M < 1); %Select the subsonic solution. Set M > 1 if want supersonic solution.
