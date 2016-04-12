@@ -2,13 +2,11 @@
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
 
-% frankie test
 
 clc;
 clear all;
 clearvars;
 
-%comment
 
 % UNIT CONVERSIONS
 % ----------------
@@ -78,6 +76,7 @@ Ma2 = vpasolve(P02./P2 ==(1+ M2.^2.*((k2-1)./2)).^(k2./(k2-1)), M2); % Solve for
 Ma2 = struct(Ma2);
 Ma2 = struct2array(Ma2)'; %Ma is returned as a symbolic variable which doesn't work in polyval in sp_heats
 Ma2 = abs(Ma2);     %This seems kind of sketchy, but looking at the results seems reasonable. Tested positive solution and it is valid, given M2 is squared in all terms.
+Ma2 = double(Ma2);
 T2  = recoveryFactor(T2m,Ma2,RFcross);
 T02 = T2.*(1 + (Ma2.^2).*((k2-1)./2));
 U2 = Ma2.*sqrt(k2.*R.*T2);
@@ -92,11 +91,12 @@ P03 = (me140_project2_data(9)'+101.3).*1000;    % P03 [absolute] [Pa]
 T3m = me140_project2_data(3)';                   % T3m, cross-flow 
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
 
+
 % Station 4 (before bend to turbine inlet)
 P4 = me140_project2_data(10)+101.3;             % P4 (static) [absolute] 
 P04_guess = P4;                                 % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
 T4m = me140_project2_data(4);                   % T4m, cross-flow
-[T4,T04,Ma4,U4,k4] = findMaTEmps(mdot_total,P04_guess,T4m,RFcross);
+[T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total, A4, P04_guess,T4m,RFcross);
 P04 = P4*(1+ Ma4^2*((k4-1)/2))^(k4/(k4-1));     % Use P4,T4,T04 to find REAL P04
 
 % Station 5 (turbine outlet)
