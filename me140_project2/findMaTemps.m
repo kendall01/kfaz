@@ -4,8 +4,10 @@ function [ T,T0,Ma,U,k ] = findMaTemps( mdot,A,Tm,P0,RF )
 % gamma is small. 
 % FIND: Ma, T & T0, U (velocity), k (gamma)
 % NOTE: Approach from ME140 Lecture 3 page 20
-
-%final
+% INPUT: Accepts scalar or vector inputs. Vector inputs for a two state
+% system consisting of state a and state b should be entered as column
+% vectors as illustrated: findMaTemps([mdot_a; mdot_b], [A_a; A_b], [Tm_a;
+% Tm_b], [P0_a; P0_b], [RF_a; RF_b])
 
 error = 0.01;
 R = 287;
