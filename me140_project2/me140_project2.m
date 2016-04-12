@@ -28,7 +28,7 @@ T5m = me140_project2_data(5)' + C_TO_K;                 % T5m, axial-flow
 T8m = me140_project2_data(6)' + C_TO_K;                 % T8m, cross-flow
 
 % Measured Pressures
-Patm = 101.3 * KPA_TO_PA; 
+Patm = 101.3;
 dP2 = (me140_project2_data(8) + Patm)' .* KPA_TO_PA;    % dP2 = Pstag - Pstatic 
 P03 = (me140_project2_data(9) + Patm)' .* KPA_TO_PA;    % P03 [absolute] [Pa]
 P4 =  (me140_project2_data(10)+ Patm)' .* KPA_TO_PA;    % P4 (static) [absolute] 
