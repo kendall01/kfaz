@@ -12,9 +12,10 @@ clearvars;
 % DATA:
 % ------
 rpm = me140_project2_data(1)';
-mdot_fuel = me140_project2_data(13).*1000;              % mdot_fuel,[g/s]
+mdot_fuel = me140_project2_data(13)';              % mdot_fuel,[kg/s]
 Fthrust_meas = me140_project2_data(14).*4.44822;        % Fthrust, [N]
-Toil = me140_project2_data(7);
+Toil = me140_project2_data(7); %[?C]
+
 
 % GIVEN:
 % ------
@@ -22,13 +23,14 @@ rho2 = 0.074887*(1/12)^3; % [lb/in^3]
 RFcross = linspace(.68, .68, length(rpm))'; %Reference Factor cross-section
 RFaxial = linspace(.86, .86, length(rpm))'; %Reference Factor axial
 R = 287; 
-Patm = 101.3;
+Patm = 101300; %Pa
 
-% Areas [in^2]
-A1 = 27.3; % Flow area at inlet of bellmouth
-A2 = 6.4;  % Effective flow area at pitot-static probe
-A3 = 9.0;  % Area of compressor exit
-A4 = 7.2;  % Area before bend to turbine inlet
+in2tom2 = 0.00064516;
+% Areas [m^2]
+A1 = linspace(27.3, 27.3, length(rpm))' .* in2tom2; % Flow area at inlet of bellmouth
+A2 = linspace(6.4, 6.4, length(rpm))' .* in2tom2;  % Effective flow area at pitot-static probe
+A3 = linspace(9.0, 9.0, length(rpm))' .* in2tom2;  % Area of compressor exit
+A4 = linspace(7.2, 7.2, le;  % Area before bend to turbine inlet
 A5 = 4.7;  % Area of turbine outlet
 A8 = 3.87; % Area of nozzle exit
 
@@ -77,12 +79,12 @@ U2 = Ma2.*sqrt(k2.*R.*T2);
 MFP2 = findMFP(Ma2,k2);
              
 % Mass Flow of Air and Fuel & Air/Fuel Ratio Plots
-mdot_air = ( MFP2*A2*P02 )/sqrt(R*T02);                 % USE: MFP = (mdot/A)*(sqrt(R*T0)/P0)
+mdot_air = ( MFP2.*A2.*P02 )./sqrt(R.*T02);                 % USE: MFP = (mdot/A)*(sqrt(R*T0)/P0)
 mdot_total = mdot_air + mdot_fuel;
 
 % Station 3 (compressor exit)
-P03 = me140_project2_data(9)+101.3;             % P03 [absolute] 
-T3m = me140_project2_data(3);                   % T3m, cross-flow 
+P03 = (me140_project2_data(9)'+101.3).*1000;    % P03 [absolute] [Pa]
+T3m = me140_project2_data(3)';                   % T3m, cross-flow 
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,P03,T3m,RFcross);
 
 % Station 4 (before bend to turbine inlet)
