@@ -2,53 +2,56 @@
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
 
-% frankie test
-
 clc;
 clear all;
 clearvars;
-
-%comment
 
 % UNIT CONVERSIONS
 % ----------------
 C_TO_K = 273.15;
 LBF_TO_N = 4.44822;
-IN2__TO_M2 = 6.4516*10^-4;
+IN2_TO_M2 = 6.4516*10^-4;
+KPA_TO_PA = 10^-3;
 
 % DATA:
 % ------
 rpm = me140_project2_data(1)';
-mdot_fuel = me140_project2_data(13)';               % mdot_fuel,[kg/s]
-Fthrust_meas = me140_project2_data(14).*LBF_TO_N;   % Fthrust, [N]
-Toil = me140_project2_data(7); 
+mdot_fuel = me140_project2_data(13)';                 % mdot_fuel,[kg/s]
+Fthrust_meas = me140_project2_data(14).*LBF_TO_N;     % Fthrust, [N]
+Toil = me140_project2_data(7) + C_TO_K; 
+
+% Measured Temperatures
+T2m = me140_project2_data(2)' + C_TO_K;                 % T2m, cross-flow
+T3m = me140_project2_data(3)' + C_TO_K;                 % T3m, cross-flow 
+T4m = me140_project2_data(4)' + C_TO_K;                 % T4m, cross-flow
+T5m = me140_project2_data(5)' + C_TO_K;                 % T5m, axial-flow
+T8m = me140_project2_data(6)' + C_TO_K;                 % T8m, cross-flow
+
+% Measured Pressures
+dP2 = (me140_project2_data(8) + Patm)'.*KPA_TO_PA;      % dP2 = Pstag - Pstatic 
+P03 = (me140_project2_data(9) + Patm)'.*KPA_TO_PA;      % P03 [absolute] [Pa]
+P4 =  (me140_project2_data(10)+ Patm)'.*KPA_TO_PA;      % P4 (static) [absolute] 
+P05 = (me140_project2_data(11)+ Patm)'.*KPA_TP_PA;      % P05 [absolute]   
+P08 = (me140_project2_data(12)+ Patm)'.*KPA_TO_PA;      % P08 [absolute]   
+
 
 % GIVEN:
 % ------
-rho2 = 0.074887*(1/12)^3; % [lb/in^3]
-RFcross = linspace(.68, .68, length(rpm))'; %Reference Factor cross-section
-RFaxial = linspace(.86, .86, length(rpm))'; %Reference Factor axial
+RFcross = linspace(.68, .68, length(rpm))';            % Reference Factor cross-section
+RFaxial = linspace(.86, .86, length(rpm))';            % Reference Factor axial
 R = 287; 
-Patm = 101300; %Pa
+Patm = 101.3 * KPA_TO_PA;                              
 
 % Areas [m^2]
-A1 = linspace(27.3, 27.3, length(rpm))' .* IN2__TO_M2; % Flow area at inlet of bellmouth
-A2 = linspace(6.4, 6.4, length(rpm))' .* IN2__TO_M2;  % Effective flow area at pitot-static probe
-A3 = linspace(9.0, 9.0, length(rpm))' .* IN2__TO_M2;  % Area of compressor exit
-A4 = linspace(7.2, 7.2, length(rpm))' .* IN2__TO_M2;  % Area before bend to turbine inlet
-A5 = linspace(4.7, 4.7, length(rpm))' .* IN2__TO_M2;  % Area of turbine outlet
-A8 = linspace(3.87, 3.87, length(rpm))' .* IN2__TO_M2; % Area of nozzle exit
+A1 = linspace(27.3, 27.3, length(rpm))' .* IN2_TO_M2;  % Flow area at inlet of bellmouth
+A2 = linspace(6.4, 6.4, length(rpm))'   .* IN2_TO_M2;  % Effective flow area at pitot-static probe
+A3 = linspace(9.0, 9.0, length(rpm))'   .* IN2_TO_M2;  % Area of compressor exit
+A4 = linspace(7.2, 7.2, length(rpm))'   .* IN2_TO_M2;  % Area before bend to turbine inlet
+A5 = linspace(4.7, 4.7, length(rpm))'   .* IN2_TO_M2;  % Area of turbine outlet
+A8 = linspace(3.87, 3.87, length(rpm))' .* IN2_TO_M2;  % Area of nozzle exit
 
 % CALCULATIONS:
 % -------------
-
-
-% -------------------------------------------------------------
-% PART 1: Tables of Data
-% -------------------------------------------------------------
-
-% All tables uploaded to google doc and made using excel
-
 % -------------------------------------------------------------
 % PART 2: Spool Speed vs. T0,P0,Ma,U,mdot
 % -------------------------------------------------------------
@@ -58,17 +61,9 @@ A8 = linspace(3.87, 3.87, length(rpm))' .* IN2__TO_M2; % Area of nozzle exit
 % (ii) no subscript = actual stagnation 
 % (ii) subscript 0 = actual stagnaton 
 
-% TO-DO's:
-% ---------
-% - check where we assumed P0=P
-% - check that we want to use Cp(T) instead of Cp(T0) in findMaTemps
-% function, but ok to initialize as Cp(Tm)
-
 % Station 2 (still need to get gamma at T2m since can't assume constant specific heat)
-dP2 = me140_project2_data(8)';                   % dP2 = Pstag - Pstatic 
-P02 = linspace(Patm, Patm, length(rpm))';       % P02 = P01 [ASSUME: isentropic from 0->2]
-P2 = P02 - dP2;                                 % P2 [absolute] 
-T2m = me140_project2_data(2)';                   % T2m, cross-flow
+P02 = linspace(Patm, Patm, length(rpm))';               % P02 = P01 [ASSUME: isentropic from 0->2]
+P2 = P02 - dP2;                                         % P2 [absolute] 
 k2 = sp_heats(T2m);
 
 M2 = sym('m',[length(rpm),1]);
@@ -88,25 +83,17 @@ mdot_air = ( MFP2.*A2.*P02 )./sqrt(R.*T02);                 % USE: MFP = (mdot/A
 mdot_total = mdot_air + mdot_fuel;
 
 % Station 3 (compressor exit)
-P03 = (me140_project2_data(9)'+101.3).*1000;    % P03 [absolute] [Pa]
-T3m = me140_project2_data(3)';                   % T3m, cross-flow 
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
 
 % Station 4 (before bend to turbine inlet)
-P4 = me140_project2_data(10)+101.3;             % P4 (static) [absolute] 
 P04_guess = P4;                                 % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
-T4m = me140_project2_data(4);                   % T4m, cross-flow
 [T4,T04,Ma4,U4,k4] = findMaTEmps(mdot_total,P04_guess,T4m,RFcross);
 P04 = P4*(1+ Ma4^2*((k4-1)/2))^(k4/(k4-1));     % Use P4,T4,T04 to find REAL P04
 
-% Station 5 (turbine outlet)
-P05 = me140_project2_data(11)+101.3;            % P05 [absolute]                                    
-T5m = me140_project2_data(5);                   % T5m, axial-flow 
+% Station 5 (turbine outlet)                                  
 [T5,T05,Ma5,U5,k5] = findMaTemps(mdot_total,P05,T5m,RFaxial);
 
-% Station 8 (nozzle exit)
-P08 = me140_project2_data(12)+101.3;            % P08 [absolute]               
-T8m = me140_project2_data(6);                   % T8m, cross-flow
+% Station 8 (nozzle exit)            
 [T8,T08,Ma8,U8,k8] = findMaTemps(mdot_total,P08,T8m,RFcross);
 
 % Station 1 (can't be found first)
