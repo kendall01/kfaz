@@ -27,19 +27,20 @@ while abs(T0-T0guess)>error;
     assume(M, 'real');
     assumeAlso(M < 1); %Select the subsonic solution. Set M > 1 if want supersonic solution.
     Ma = vpasolve( MFP == M.*sqrt(k).*(1+((k-1)./2).*M.^2).^(-(k+1)./(2.*(k-1))), M );
+    Ma = struct(Ma);
     Ma = struct2array(Ma); %Ma is returned as a symbolic variable which doesn't work in polyval in sp_heats
 
     % (d) Find T via Eq (3)
-    T = Tm/(1+RF*((k-1)/2)*Ma^2);
+    T = Tm./(1+RF.*((k-1)./2).*Ma.^2);
 
     % (e) Find T0 via Eq. (4), If T0 = T0(initial guess) then T0 is correct.
-    T0 = T*(1+((k-1)/2)*Ma^2);
+    T0 = T.*(1+((k-1)./2).*Ma.^2);
 
     % update
     T0guess = T0;
     k = sp_heats(T); 
 end
 
-U = Ma*sqrt(k*R*T0);
+U = Ma.*sqrt(k.*R.*T0);
 end
 
