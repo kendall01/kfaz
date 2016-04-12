@@ -5,6 +5,9 @@ function [ T,T0,Ma,U,k ] = findMaTemps( mdot,A,Tm,P0,RF )
 % FIND: Ma, T & T0, U (velocity), k (gamma)
 % NOTE: Approach from ME140 Lecture 3 page 20
 
+
+%FRANKIE
+
 error = 0.01;
 R = 287;
 
