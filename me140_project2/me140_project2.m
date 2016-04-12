@@ -32,7 +32,7 @@ Patm = 101.3 * KPA_TO_PA;
 dP2 = (me140_project2_data(8) + Patm)' .* KPA_TO_PA;    % dP2 = Pstag - Pstatic 
 P03 = (me140_project2_data(9) + Patm)' .* KPA_TO_PA;    % P03 [absolute] [Pa]
 P4 =  (me140_project2_data(10)+ Patm)' .* KPA_TO_PA;    % P4 (static) [absolute] 
-P05 = (me140_project2_data(11)+ Patm)' .* KPA_TP_PA;    % P05 [absolute]   
+P05 = (me140_project2_data(11)+ Patm)' .* KPA_TO_PA;    % P05 [absolute]   
 P08 = (me140_project2_data(12)+ Patm)' .* KPA_TO_PA;    % P08 [absolute]   
 
 
@@ -91,13 +91,13 @@ mdot_total = mdot_air + mdot_fuel;
 % Station 4 (before bend to turbine inlet)
 P04_guess = P4;                                 % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
 [T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total, A4, P04_guess,T4m,RFcross);
-P04 = P4*(1+ Ma4^2*((k4-1)/2))^(k4/(k4-1));     % Use P4,T4,T04 to find REAL P04
+P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));     % Use P4,T4,T04 to find REAL P04
 
 % Station 5 (turbine outlet)                                  
-[T5,T05,Ma5,U5,k5] = findMaTemps(mdot_total,P05,T5m,RFaxial);
+[T5,T05,Ma5,U5,k5] = findMaTemps(mdot_total,A5,T5m,P05,RFaxial);
 
 % Station 8 (nozzle exit)            
-[T8,T08,Ma8,U8,k8] = findMaTemps(mdot_total,P08,T8m,RFcross);
+[T8,T08,Ma8,U8,k8] = findMaTemps(mdot_total,A8,T8m,P08,RFcross);
 
 % Station 1 (can't be found first)
 % Process:
