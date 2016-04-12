@@ -2,15 +2,25 @@
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
 
+
+% hi my name is Frankie
+% added second 
+
 clc;
 clear all;
 clearvars;
+% DATA:
+% ------
+rpm = me140_project2_data(1)';
+mdot_fuel = me140_project2_data(13).*1000;              % mdot_fuel,[g/s]
+Fthrust_meas = me140_project2_data(14).*4.44822;        % Fthrust, [N]
+Toil = me140_project2_data(7);
 
 % GIVEN:
 % ------
 rho2 = 0.074887*(1/12)^3; % [lb/in^3]
-RFcross = .68; %Reference Factor cross-section
-RFaxial = .86; %Reference Factor axial
+RFcross = linspace(.68, .68, length(rpm))'; %Reference Factor cross-section
+RFaxial = linspace(.86, .86, length(rpm))'; %Reference Factor axial
 R = 287; 
 Patm = 101.3;
 
@@ -24,10 +34,7 @@ A8 = 3.87; % Area of nozzle exit
 
 % CALCULATIONS:
 % -------------
-rpm = me140_project2_data(1)';
-mdot_fuel = me140_project2_data(13).*1000;              % mdot_fuel,[g/s]
-Fthrust_meas = me140_project2_data(14).*4.44822;        % Fthrust, [N]
-Toil = me140_project2_data(7);
+
 
 % -------------------------------------------------------------
 % PART 1: Tables of Data
@@ -55,7 +62,7 @@ dP2 = me140_project2_data(8)';                   % dP2 = Pstag - Pstatic
 P02 = linspace(Patm, Patm, length(rpm))';       % P02 = P01 [ASSUME: isentropic from 0->2]
 P2 = P02 - dP2;                                 % P2 [absolute] 
 T2m = me140_project2_data(2)';                   % T2m, cross-flow
-k2 = sp_heats(T2m)';
+k2 = sp_heats(T2m);
 
 M2 = sym('m',[length(rpm),1]);
 assume(M2, 'real');
@@ -65,8 +72,8 @@ Ma2 = struct(Ma2);
 Ma2 = struct2array(Ma2)'; %Ma is returned as a symbolic variable which doesn't work in polyval in sp_heats
 Ma2 = abs(Ma2);     %This seems kind of sketchy, but looking at the results seems reasonable. Tested positive solution and it is valid, given M2 is squared in all terms.
 T2  = recoveryFactor(T2m,Ma2,RFcross);
-T02 = T2*(1 + (Ma2^2)*((k-1)/2));
-U2 = Ma2*sqrt(k*R*T2);
+T02 = T2.*(1 + (Ma2.^2).*((k2-1)./2));
+U2 = Ma2.*sqrt(k2.*R.*T2);
 MFP2 = findMFP(Ma2,k2);
              
 % Mass Flow of Air and Fuel & Air/Fuel Ratio Plots
