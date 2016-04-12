@@ -9,12 +9,21 @@
 clc;
 clear all;
 clearvars;
+
+%comment
+
+% UNIT CONVERSIONS
+% ----------------
+C_TO_K = 273.15;
+LBF_TO_N = 4.44822;
+IN2__TO_M2 = 6.4516*10^-4;
+
 % DATA:
 % ------
 rpm = me140_project2_data(1)';
-mdot_fuel = me140_project2_data(13)';              % mdot_fuel,[kg/s]
-Fthrust_meas = me140_project2_data(14).*4.44822;        % Fthrust, [N]
-Toil = me140_project2_data(7); %[?C]
+mdot_fuel = me140_project2_data(13)';               % mdot_fuel,[kg/s]
+Fthrust_meas = me140_project2_data(14).*LBF_TO_N;   % Fthrust, [N]
+Toil = me140_project2_data(7); 
 
 % GIVEN:
 % ------
@@ -24,14 +33,13 @@ RFaxial = linspace(.86, .86, length(rpm))'; %Reference Factor axial
 R = 287; 
 Patm = 101300; %Pa
 
-in2tom2 = 0.00064516;
 % Areas [m^2]
-A1 = linspace(27.3, 27.3, length(rpm))' .* in2tom2; % Flow area at inlet of bellmouth
-A2 = linspace(6.4, 6.4, length(rpm))' .* in2tom2;  % Effective flow area at pitot-static probe
-A3 = linspace(9.0, 9.0, length(rpm))' .* in2tom2;  % Area of compressor exit
-A4 = linspace(7.2, 7.2, length(rpm))' .* in2tom2;  % Area before bend to turbine inlet
-A5 = linspace(4.7, 4.7, length(rpm))' .* in2tom2;  % Area of turbine outlet
-A8 = linspace(3.87, 3.87, length(rpm))' .* in2tom2; % Area of nozzle exit
+A1 = linspace(27.3, 27.3, length(rpm))' .* IN2__TO_M2; % Flow area at inlet of bellmouth
+A2 = linspace(6.4, 6.4, length(rpm))' .* IN2__TO_M2;  % Effective flow area at pitot-static probe
+A3 = linspace(9.0, 9.0, length(rpm))' .* IN2__TO_M2;  % Area of compressor exit
+A4 = linspace(7.2, 7.2, length(rpm))' .* IN2__TO_M2;  % Area before bend to turbine inlet
+A5 = linspace(4.7, 4.7, length(rpm))' .* IN2__TO_M2;  % Area of turbine outlet
+A8 = linspace(3.87, 3.87, length(rpm))' .* IN2__TO_M2; % Area of nozzle exit
 
 % CALCULATIONS:
 % -------------
