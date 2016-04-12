@@ -2,7 +2,6 @@
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
 
-
 clc;
 clear all;
 clearvars;
@@ -17,9 +16,9 @@ KPA_TO_PA = 10^-3;
 % DATA:
 % ------
 rpm = me140_project2_data(1)';
-mdot_fuel = me140_project2_data(13)';                 % mdot_fuel,[kg/s]
-Fthrust_meas = me140_project2_data(14).*LBF_TO_N;     % Fthrust, [N]
-Toil = me140_project2_data(7) + C_TO_K; 
+mdot_fuel = me140_project2_data(13)';                   % mdot_fuel,[kg/s]
+Fthrust_meas = me140_project2_data(14)' .* LBF_TO_N;    % Fthrust, [N]
+Toil = me140_project2_data(7)' + C_TO_K; 
 
 % Measured Temperatures
 T2m = me140_project2_data(2)' + C_TO_K;                 % T2m, cross-flow
@@ -29,11 +28,12 @@ T5m = me140_project2_data(5)' + C_TO_K;                 % T5m, axial-flow
 T8m = me140_project2_data(6)' + C_TO_K;                 % T8m, cross-flow
 
 % Measured Pressures
-dP2 = (me140_project2_data(8) + Patm)'.*KPA_TO_PA;      % dP2 = Pstag - Pstatic 
-P03 = (me140_project2_data(9) + Patm)'.*KPA_TO_PA;      % P03 [absolute] [Pa]
-P4 =  (me140_project2_data(10)+ Patm)'.*KPA_TO_PA;      % P4 (static) [absolute] 
-P05 = (me140_project2_data(11)+ Patm)'.*KPA_TP_PA;      % P05 [absolute]   
-P08 = (me140_project2_data(12)+ Patm)'.*KPA_TO_PA;      % P08 [absolute]   
+Patm = 101.3 * KPA_TO_PA; 
+dP2 = (me140_project2_data(8) + Patm)' .* KPA_TO_PA;    % dP2 = Pstag - Pstatic 
+P03 = (me140_project2_data(9) + Patm)' .* KPA_TO_PA;    % P03 [absolute] [Pa]
+P4 =  (me140_project2_data(10)+ Patm)' .* KPA_TO_PA;    % P4 (static) [absolute] 
+P05 = (me140_project2_data(11)+ Patm)' .* KPA_TP_PA;    % P05 [absolute]   
+P08 = (me140_project2_data(12)+ Patm)' .* KPA_TO_PA;    % P08 [absolute]   
 
 
 % GIVEN:
@@ -41,7 +41,7 @@ P08 = (me140_project2_data(12)+ Patm)'.*KPA_TO_PA;      % P08 [absolute]
 RFcross = linspace(.68, .68, length(rpm))';            % Reference Factor cross-section
 RFaxial = linspace(.86, .86, length(rpm))';            % Reference Factor axial
 R = 287; 
-Patm = 101.3 * KPA_TO_PA;                              
+                             
 
 % Areas [m^2]
 A1 = linspace(27.3, 27.3, length(rpm))' .* IN2_TO_M2;  % Flow area at inlet of bellmouth
