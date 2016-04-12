@@ -2,6 +2,10 @@
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
 
+
+% hi my name is Frankie
+% added second 
+
 clc;
 clear all;
 clearvars;
@@ -11,6 +15,7 @@ rpm = me140_project2_data(1)';
 mdot_fuel = me140_project2_data(13)';              % mdot_fuel,[kg/s]
 Fthrust_meas = me140_project2_data(14).*4.44822;        % Fthrust, [N]
 Toil = me140_project2_data(7); %[?C]
+
 
 % GIVEN:
 % ------
