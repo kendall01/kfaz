@@ -11,7 +11,7 @@ clearvars;
 C_TO_K = 273.15;
 LBF_TO_N = 4.44822;
 IN2_TO_M2 = 6.4516*10^-4;
-KPA_TO_PA = 10^-3;
+KPA_TO_PA = 10^3;
 
 % DATA:
 % ------
