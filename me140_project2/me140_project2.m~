@@ -206,7 +206,7 @@ plotfixer
 % TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
 % NOZZLE (5->8): total-to-static
 
-Pin_compressor = h03 - h02;
+Pin_compressor = h03 - h02; 
 Pout_turbine = h04 - h05;
 
 % Compressor
