@@ -4,7 +4,7 @@
 
 clc;
 clear all;
-clearvars;
+close all;
 
 % UNIT CONVERSIONS
 % ----------------
@@ -119,54 +119,60 @@ TSFC = mdot_fuel./Fthrust;
 % -------------
 % Stagnation Temperature Plots
 figure(1)
-subplot(2,2,1)
+%subplot(2,2,1)
 plot(rpm,T02,'b',rpm,T03,'c',rpm,T04,'m',rpm,T05,'r',rpm,T08,'g');
 title('Part 2: Station Stagnation Temperature vs Spool Speed');
 ylabel('Stagnation Temperature [K]');
 xlabel('Spool Speed [rpm]');
-legend('T02','T03','T04','T05','T08');
+legend('T02','T03','T04','T05','T08', 'East');
+plotfixer
 
 % Stagnation Pressure Plots
-subplot(2,2,2)
+figure(2)
+%subplot(2,2,2)
 plot(rpm,P02./KPA_TO_PA,'b',rpm,P03./KPA_TO_PA,'c',rpm,P04./KPA_TO_PA,'m',rpm,P05./KPA_TO_PA,'r',rpm,P08./KPA_TO_PA,'g');
 title('Part 2: Station Stagnation Pressure vs Spool Speed');
 ylabel('Stagnation Pressure [kPa]'); 
 xlabel('Spool Speed [rpm]');
-legend('P02','P03','P4','P05','P08');
+legend('P02','P03','P4','P05','P08', 'East');
+plotfixer
 
 % Mach Plots
-subplot(2,2,3)
+figure(3)
+%subplot(2,2,3)
 plot(rpm,Ma2,'b',rpm,Ma3,'c',rpm,Ma4,'m',rpm,Ma5,'r',rpm,Ma8,'g');
 title('Part 2: Station Mach Number vs Spool Speed');
 ylabel('Mach number');
 xlabel('Spool Speed [rpm]');
-legend('Ma2','Ma3','Ma4','Ma5','Ma8');
+legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'NorthWest');
+plotfixer
 
 % Velocity Plots
-subplot(2,2,4)
+figure(4)
+%subplot(2,2,4)
 plot(rpm,U2,'b',rpm,U3,'c',rpm,U4,'m',rpm,U5,'r',rpm,U8,'g');
 title('Part 2: Station Velocity vs Spool Speed');
 ylabel('Velocity [m/s]');
 xlabel('Spool Speed [rpm]');
-legend('U02','U03','U04','U05','U08');
+legend('U02','U03','U04','U05','U08','NorthWest');
 plotfixer
 
 % Mass Flow Plots
-figure(2)
+figure(5)
 plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,air_fuel_ratio,'m');
 title('Part 2: Mass flow Rates vs Spool Speed');
 ylabel('Mass FLow Rate [g/s]');
 xlabel('Spool Speed [rpm]');
-legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio');
+legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'NorthWest');
 plotfixer
 
 % Thrust Flow Plots
-figure(3)
+figure(6)
 plot(rpm,Fthrust,'b', rpm,Fthrust_meas,'c');
 title('Part 2: Spool Speed vs Net Thrust and Measured Thrust ');
 ylabel('Thrust [N]');
 xlabel('Spool Speed [rpm]');
-legend('Fthrust (calculated)','Fthrust (measured)');
+legend('Fthrust (calculated)','Fthrust (measured)', 'NorthWest');
 plotfixer
 
 % -------------------------------------------------------------
@@ -176,20 +182,24 @@ Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
 eta_thermal = Wnet./Qdot;
 
 % Thrust Flow Plots
-figure(4)
-subplot(2,2,1)
+figure(7)
+%subplot(2,2,1)
 plot(rpm,ST,'b')
 title('Part 3: Specific Thrust vs Spool Speed ');
 ylabel('Thrust [N]');
 xlabel('Spool Speed [rpm]');
+plotfixer
 
-subplot(2,2,2)
+figure(8)
+%subplot(2,2,2)
 plot(rpm,TSFC,'m')
 title('Part 3: Thrust Specific Fuel Consumption vs Spool Speed');
 ylabel('Thrust [kg*N/s]');
 xlabel('Spool Speed [rpm]');
+plotfixer
 
-subplot(2,2,3)
+figure(9)
+%subplot(2,2,3)
 plot(rpm,eta_thermal,'g');
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
@@ -216,10 +226,16 @@ T05s = applyIsentropicTempVar( T04, P05./P04 );    % tt
 % Nozzle
 T8s = applyIsentropicTempVar ( T05, P8./P05 );     % ts
 
-% Adiabatic Efficiencies
-n_compressor = applyEfficiencyVar(T02,T02s,T03);
-n_turbine =    applyEfficiencyVar(T04,T04s,T05);
-n_nozzle =     applyEfficiencyVar(T05,T05s,T08);
+
+f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+n_compressor = zeros(length(T02),1);
+n_turbine =    zeros(length(T02),1);
+n_nozzle =     zeros(length(T02),1);
+for i = 1:length(T02)    
+    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
+    n_turbine(i) =    integral( f_temp,T05(i),T04(i) )/integral( f_temp,T05s(i),T04(i) );
+    n_nozzle(i) =        integral( f_temp,T8(i),T05(i) )/integral( f_temp,T8s(i),T05(i) );
+end
 
 P0ratio_combustor = P04/P03;
 
@@ -230,15 +246,16 @@ n_combustor_apparent = Wdotin_air./Qdotin_fuel;
 
 % Plot 
 % Power Plots
-figure(5)
-plot(rpm, Pin_compressor, 'r', rpm, Pout_turbine, 'b');
-title('Power into the Turbine and Compressor vs Spool Speed');
+figure(10)
+plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine), 'b');
 xlabel('Spool Speed (rpm)');
 ylabel('Power (Watts)');
-legend('Power In - Compressor', 'Power Out - Turbine');
+title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
+legend('Power into Compressor', 'Power Out of Turbine', 'NorthWest');
+plotfixer
 
 % Adiabatic Efficiency Plots
-figure(6)
+figure(11)
 plot(rpm, n_compressor, 'r', rpm, n_turbine, 'b', rpm, n_nozzle, 'm');
 title('Efficiency of Compressor, Turbine, Nozzle vs Spool Speed');
 xlabel('Spool Speed (rpm)');
@@ -246,17 +263,16 @@ ylabel('Power (Watts)');
 legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
 
 % Stagnation Pressure Ratio Across Combustor
-figure(7)
+figure(12)
 plot(rpm, P0ratio_combustor, 'g');
 title('Stagnation Pressure Across Combustor vs Spool Speed');
 xlabel('Spool Speed (rpm)');
 ylabel('Stagnation Pressure Ratio, P04/P03');
 
 % Apparent Combustion Efficiency 
-figure(8)
+figure(13)
 plot(rpm, P0ratio_combustor, 'g');
 title('Apparent Combustion Efficiency vs Spool Speed');
 xlabel('Spool Speed (rpm)');
 ylabel('n_combustor_apparent');
-
 
