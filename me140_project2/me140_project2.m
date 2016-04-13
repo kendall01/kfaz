@@ -82,6 +82,7 @@ MFP2 = findMFP(Ma2,k2);
 % Mass Flow of Air and Fuel & Air/Fuel Ratio Plots
 mdot_air = ( MFP2.*A2.*P02 )./sqrt(R.*T02);                 % USE: MFP = (mdot/A)*(sqrt(R*T0)/P0)
 mdot_total = mdot_air + mdot_fuel;
+air_fuel_ratio = mdot_air ./ mdot_fuel;
 
 % Station 3 (compressor exit)
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);

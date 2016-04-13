@@ -29,12 +29,12 @@ T5m = me140_project2_data(5)' + C_TO_K;                 % T5m, axial-flow
 T8m = me140_project2_data(6)' + C_TO_K;                 % T8m, cross-flow
 
 % Measured Pressures
-Patm = 101.3;
-dP2 = (me140_project2_data(8) + Patm)' .* KPA_TO_PA;    % dP2 = Pstag - Pstatic 
-P03 = (me140_project2_data(9) + Patm)' .* KPA_TO_PA;    % P03 [absolute] [Pa]
-P4 =  (me140_project2_data(10)+ Patm)' .* KPA_TO_PA;    % P4 (static) [absolute] 
-P05 = (me140_project2_data(11)+ Patm)' .* KPA_TO_PA;    % P05 [absolute]   
-P08 = (me140_project2_data(12)+ Patm)' .* KPA_TO_PA;    % P08 [absolute]   
+Patm = 101300;
+dP2 = me140_project2_data(8)' .* KPA_TO_PA;    % dP2 = Pstag - Pstatic 
+P03 = me140_project2_data(9)' .* KPA_TO_PA + Patm ;    % P03 [absolute] [Pa]
+P4 =  me140_project2_data(10)' .* KPA_TO_PA + Patm;    % P4 (static) [absolute] 
+P05 = me140_project2_data(11)' .* KPA_TO_PA + Patm;    % P05 [absolute]   
+P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    % P08 [absolute]   
 
 
 % GIVEN:
@@ -82,6 +82,7 @@ MFP2 = findMFP(Ma2,k2);
 % Mass Flow of Air and Fuel & Air/Fuel Ratio Plots
 mdot_air = ( MFP2.*A2.*P02 )./sqrt(R.*T02);                 % USE: MFP = (mdot/A)*(sqrt(R*T0)/P0)
 mdot_total = mdot_air + mdot_fuel;
+air_fuel_ratio = mdot_air ./ mdot_fuel;
 
 % Station 3 (compressor exit)
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
@@ -89,7 +90,7 @@ mdot_total = mdot_air + mdot_fuel;
 
 % Station 4 (before bend to turbine inlet)
 P04_guess = P4;                                 % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
-[T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total, A4, P04_guess,T4m,RFcross);
+[T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total,A4,T4m,P04_guess,RFcross);
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));     % Use P4,T4,T04 to find REAL P04
 
 % Station 5 (turbine outlet)                                  
@@ -140,7 +141,7 @@ legend('U02','U03','U04','U05','U08');
 
 % Mass Flow Plots
 figure(5)
-plot(mdot_air,rpm,'b', mdot_fuel,rpm,'c',air_fuel_ratio,rpm,'m');
+plot(mdot_air,,'b', mdot_fuel,rpm,'c',air_fuel_ratio,rpm,'m');
 title('Spool Speed vs Mass flow Rates');
 xlabel('Velocity (m/s)');
 ylabel('Spool Speed (rpm)');
