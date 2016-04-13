@@ -29,12 +29,12 @@ T5m = me140_project2_data(5)' + C_TO_K;                 % T5m, axial-flow
 T8m = me140_project2_data(6)' + C_TO_K;                 % T8m, cross-flow
 
 % Measured Pressures
-Patm = 101.3;
-dP2 = (me140_project2_data(8) + Patm)' .* KPA_TO_PA;    % dP2 = Pstag - Pstatic 
-P03 = (me140_project2_data(9) + Patm)' .* KPA_TO_PA;    % P03 [absolute] [Pa]
-P4 =  (me140_project2_data(10)+ Patm)' .* KPA_TO_PA;    % P4 (static) [absolute] 
-P05 = (me140_project2_data(11)+ Patm)' .* KPA_TO_PA;    % P05 [absolute]   
-P08 = (me140_project2_data(12)+ Patm)' .* KPA_TO_PA;    % P08 [absolute]   
+Patm = 101300;
+dP2 = me140_project2_data(8)' .* KPA_TO_PA;    % dP2 = Pstag - Pstatic 
+P03 = me140_project2_data(9)' .* KPA_TO_PA + Patm ;    % P03 [absolute] [Pa]
+P4 =  me140_project2_data(10)' .* KPA_TO_PA + Patm;    % P4 (static) [absolute] 
+P05 = me140_project2_data(11)' .* KPA_TO_PA + Patm;    % P05 [absolute]   
+P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    % P08 [absolute]   
 
 
 % GIVEN:
@@ -89,7 +89,7 @@ mdot_total = mdot_air + mdot_fuel;
 
 % Station 4 (before bend to turbine inlet)
 P04_guess = P4;                                 % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
-[T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total, A4, P04_guess,T4m,RFcross);
+[T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total,A4,T4m,P04_guess,RFcross);
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));     % Use P4,T4,T04 to find REAL P04
 
 % Station 5 (turbine outlet)                                  
@@ -108,7 +108,7 @@ P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));     % Use P4,T4,T04 to find RE
 % -------------
 % Stagnation Temperature Plots
 figure(1)
-plot(T02,rpm,'b',T03,rpm,'c',T04,rpm,'m',T05,rpm,'r',T08,rpm,'g');
+plot(rpm,T02,'b',rpm,T03,'c',rpm,T04,'m',rpm,T05,'r',rpm,T08,'g');
 title('Spool Speed vs Station Stagnation Temperature');
 xlabel('Stagnation Temperature (Celsius)');
 ylabel('Spool Speed (rpm)');
@@ -116,15 +116,15 @@ legend('T02','T03','T04','T05','T08');
 
 % Stagnation Pressure Plots
 figure(2)
-plot(P02,rpm,'b',P03,rpm,'c',P04,rpm,'m',P05,rpm,'r',P08,rpm,'g');
+plot(rpm,P02,'b',rpm,P03,'c',rpm,P04,'m',rpm,P05,'r',rpm,P08,'g');
 title('Spool Speed vs Station Stagnation Pressure');
-xlabel('Stagnation Pressure (kPa)'); 
+xlabel('Stagnation Pressure (Pa)'); 
 ylabel('Spool Speed (rpm)');
 legend('P02','P03','P4','P05','P08');
 
 % Mach Plots
 figure(3);
-plot(Ma2,rpm,'b',Ma3,rpm,'c',Ma4,rpm,'m',Ma5,rpm,'r',Ma8,rpm,'g');
+plot(rpm,Ma2,'b',rpm,Ma3,'c',rpm,Ma4,'m',rpm,Ma5,'r',rpm,Ma8,'g');
 title('Spool Speed vs Station Mach Number');
 xlabel('Mach number');
 ylabel('Spool Speed (rpm)');
@@ -132,19 +132,19 @@ legend('Ma2','Ma3','Ma4','Ma5','Ma8');
 
 % Velocity Plots
 figure(4);
-plot(U2,rpm,'b',U3,rpm,'c',U4,rpm,'m',U5,rpm,'r',U8,rpm,'g');
+plot(rpm,U2,'b',rpm,U3,'c',rpm,U4,'m',rpm,U5,'r',rpm,U8,'g');
 title('Spool Speed vs Station Velocity');
 xlabel('Velocity (m/s)');
 ylabel('Spool Speed (rpm)');
 legend('U02','U03','U04','U05','U08');
 
-% Mass Flow Plots
-figure(5)
-plot(mdot_air,rpm,'b', mdot_fuel,rpm,'c',air_fuel_ratio,rpm,'m');
-title('Spool Speed vs Mass flow Rates');
-xlabel('Velocity (m/s)');
-ylabel('Spool Speed (rpm)');
-legend('Mass Flow Air','Mass flow Fuel','Air-Fuel Ratio');
+% % Mass Flow Plots
+% figure(5)
+% plot(rpm,mdot_air,'b', rpm,mdot_fuel,'c',rpm,air_fuel_ratio,'m');
+% title('Spool Speed vs Mass flow Rates');
+% xlabel('Velocity (m/s)');
+% ylabel('Spool Speed (rpm)');
+% legend('Mass Flow Air','Mass flow Fuel','Air-Fuel Ratio');
 
 % -------------------------------------------------------------
 % PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency
