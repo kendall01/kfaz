@@ -13,7 +13,7 @@ R = 287;                        % [J/kg*K]
 P = [d,c,b,a];
 
 cp = polyval(P,T);
-cp = cp ./ molar_mass_air %convert from KJ/kmol-K to J/kg-K
+cp = cp ./ molar_mass_air; %convert from KJ/kmol-K to J/kg-K
 cv = cp - (R); %R converted to J/kg-K
 gamma = cp./cv; 
 
