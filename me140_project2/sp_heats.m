@@ -1,5 +1,6 @@
-function [gamma] = sp_heats(T)
+function [cp,cv,gamma] = sp_heats(T)
 %Works for matrices
+% Returns Joules
 a = 28.11;
 b = 0.1967E-2;
 c = 0.4802E-5;
@@ -12,7 +13,7 @@ R = 287;                        % [J/kg*K]
 P = [d,c,b,a];
 
 cp = polyval(P,T);
-cp = cp ./ molar_mass_air; %convert from KJ/kmol-K to J/kg-K
+cp = cp ./ molar_mass_air %convert from KJ/kmol-K to J/kg-K
 cv = cp - (R); %R converted to J/kg-K
 gamma = cp./cv; 
 

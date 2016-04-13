@@ -1,6 +1,6 @@
 function [ U ] = findU( T0,P0,mdot,A )
     R = 287;
-    k = sp_heats(T0);
+    [~,~,k] = sp_heats(T0);
     
     % Find MFP via Eq. (1)
     MFP = (mdot./A).*sqrt(R.*T0)./P0;
