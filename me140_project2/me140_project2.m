@@ -4,7 +4,7 @@
 
 clc;
 clear all;
-clearvars;
+close all;
 
 % UNIT CONVERSIONS
 % ----------------
@@ -218,19 +218,24 @@ T05s = applyIsentropicTempVar( T04, P05./P04 );    % tt
 % Nozzle
 T8s = applyIsentropicTempVar ( T05, P8./P05 );     % ts
 
-n_compressor = applyEfficiencyVar(T02,T02s,T03);
-n_turbine =    applyEfficiencyVar(T04,T04s,T05);
-n_nozzle =     applyEfficiencyVar(T05,T05s,T08);
+f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+n_compressor = zeros(length(T02),1);
+n_turbine =    zeros(length(T02),1);
+n_nozzle =     zeros(length(T02),1);
+for i = 1:length(T02)    
+    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
+    n_turbine(i) =    integral( f_temp,T05(i),T04(i) )/integral( f_temp,T05s(i),T04(i) );
+    n_nozzle(i) =        integral( f_temp,T8(i),T05(i) )/integral( f_temp,T8s(i),T05(i) );
+end
 
 Pratio_combustor = P04/P03;
 
 % Plot 
 
 figure(5)
-plot(rpm, Pin_compressor, 'r');
+plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine), 'b');
 xlabel('Spool Speed (rpm)');
 ylabel('Power (Watts)');
-hold on
-plot(rpm, Pout_turbine, 'b');
-legend('Power In - Compressor', 'Power Out - Turbine')
+legend('Power into Compressor', 'Power Out of Turbine');
+plotfixer
 
