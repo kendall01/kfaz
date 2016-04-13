@@ -12,6 +12,7 @@ C_TO_K = 273.15;
 LBF_TO_N = 4.44822;
 IN2_TO_M2 = 6.4516*10^-4;
 KPA_TO_PA = 10^3;
+KG_TO_G = 10^3;
 R = 287.058;                                           % J/(kg*K)
 
 % DATA:
@@ -109,43 +110,43 @@ P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));     % Use P4,T4,T04 to find RE
 % -------------
 % Stagnation Temperature Plots
 figure(1)
-plot(T02,rpm,'b',T03,rpm,'c',T04,rpm,'m',T05,rpm,'r',T08,rpm,'g');
+plot(rpm,T02,'b',rpm,T03,'c',rpm,T04,'m',rpm,T05,'r',rpm,T08,'g');
 title('Spool Speed vs Station Stagnation Temperature');
-xlabel('Stagnation Temperature (Celsius)');
-ylabel('Spool Speed (rpm)');
+ylabel('Stagnation Temperature [K]');
+xlabel('Spool Speed [rpm]');
 legend('T02','T03','T04','T05','T08');
 
 % Stagnation Pressure Plots
 figure(2)
-plot(P02,rpm,'b',P03,rpm,'c',P04,rpm,'m',P05,rpm,'r',P08,rpm,'g');
+plot(rpm,P02,'b',rpm,P03,'c',rpm,P04,'m',rpm,P05,'r',rpm,P08,'g');
 title('Spool Speed vs Station Stagnation Pressure');
-xlabel('Stagnation Pressure (kPa)'); 
-ylabel('Spool Speed (rpm)');
+ylabel('Stagnation Pressure [Pa]'); 
+xlabel('Spool Speed [rpm]');
 legend('P02','P03','P4','P05','P08');
 
 % Mach Plots
 figure(3);
-plot(Ma2,rpm,'b',Ma3,rpm,'c',Ma4,rpm,'m',Ma5,rpm,'r',Ma8,rpm,'g');
+plot(rpm,Ma2,'b',rpm,Ma3,'c',rpm,Ma4,'m',rpm,Ma5,'r',rpm,Ma8,'g');
 title('Spool Speed vs Station Mach Number');
-xlabel('Mach number');
-ylabel('Spool Speed (rpm)');
+ylabel('Mach number');
+xlabel('Spool Speed [rpm]');
 legend('Ma2','Ma3','Ma4','Ma5','Ma8');
 
 % Velocity Plots
 figure(4);
-plot(U2,rpm,'b',U3,rpm,'c',U4,rpm,'m',U5,rpm,'r',U8,rpm,'g');
+plot(rpm,U2,'b',rpm,U3,'c',rpm,U4,'m',rpm,U5,'r',rpm,U8,'g');
 title('Spool Speed vs Station Velocity');
-xlabel('Velocity (m/s)');
-ylabel('Spool Speed (rpm)');
+ylabel('Velocity [m/s]');
+xlabel('Spool Speed [rpm]');
 legend('U02','U03','U04','U05','U08');
 
-% Mass Flow Plots
+% % Mass Flow Plots
 figure(5)
-plot(mdot_air,rpm,'b', mdot_fuel,rpm,'c',air_fuel_ratio,rpm,'m');
+plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,air_fuel_ratio,'m');
 title('Spool Speed vs Mass flow Rates');
-xlabel('Velocity (m/s)');
-ylabel('Spool Speed (rpm)');
-legend('Mass Flow Air','Mass flow Fuel','Air-Fuel Ratio');
+ylabel('Mass FLow Rate [g/s]');
+xlabel('Spool Speed [rpm]');
+legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio');
 
 % -------------------------------------------------------------
 % PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency
