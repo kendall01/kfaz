@@ -1,5 +1,5 @@
 function [ dh ] = find_dh( T1,T2 )
-
+%Returns kJ
 error = 1E-4;
 dT = 0.01;
 speed_ratio = 1000;

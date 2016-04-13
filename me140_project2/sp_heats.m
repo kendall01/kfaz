@@ -1,5 +1,6 @@
-function [gamma] = sp_heats(T)
+function [cp,cv,gamma] = sp_heats(T)
 %Works for matrices
+% Returns Joules
 a = 28.11;
 b = 0.1967E-2;
 c = 0.4802E-5;
