@@ -225,3 +225,12 @@ n_nozzle =     applyEfficiencyVar(T05,T05s,T08);
 Pratio_combustor = P04/P03;
 
 % Plot 
+
+figure(5)
+plot(rpm, Pin_compressor, 'r');
+xlabel('Spool Speed (rpm)');
+ylabel('Power (Watts)');
+hold on
+plot(rpm, Pout_turbine, 'b');
+legend('Power In - Compressor', 'Power Out - Turbine')
+
