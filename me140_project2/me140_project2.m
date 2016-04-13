@@ -66,7 +66,7 @@ A8 = linspace(3.87, 3.87, length(rpm))' .* IN2_TO_M2;  % Area of nozzle exit
 % Station 2 (still need to get gamma at T2m since can't assume constant specific heat)
 P02 = linspace(Patm, Patm, length(rpm))';               % P02 = P01 [ASSUME: isentropic from 0->2]
 P2 = P02 - dP2;                                         % P2 [absolute] 
-k2 = sp_heats(T2m);
+[~,~,k2] = sp_heats(T2m);
 
 M2 = sym('m',[length(rpm),1]);
 assume(M2, 'real');
@@ -124,7 +124,7 @@ plot(rpm,T02,'b',rpm,T03,'c',rpm,T04,'m',rpm,T05,'r',rpm,T08,'g');
 title('Part 2: Station Stagnation Temperature vs Spool Speed');
 ylabel('Stagnation Temperature [K]');
 xlabel('Spool Speed [rpm]');
-legend('T02','T03','T04','T05','T08', 'East');
+legend('T02','T03','T04','T05','T08', 'Location', 'East');
 plotfixer
 
 % Stagnation Pressure Plots
@@ -134,7 +134,7 @@ plot(rpm,P02./KPA_TO_PA,'b',rpm,P03./KPA_TO_PA,'c',rpm,P04./KPA_TO_PA,'m',rpm,P0
 title('Part 2: Station Stagnation Pressure vs Spool Speed');
 ylabel('Stagnation Pressure [kPa]'); 
 xlabel('Spool Speed [rpm]');
-legend('P02','P03','P4','P05','P08', 'East');
+legend('P02','P03','P4','P05','P08', 'Location', 'East');
 plotfixer
 
 % Mach Plots
@@ -144,7 +144,7 @@ plot(rpm,Ma2,'b',rpm,Ma3,'c',rpm,Ma4,'m',rpm,Ma5,'r',rpm,Ma8,'g');
 title('Part 2: Station Mach Number vs Spool Speed');
 ylabel('Mach number');
 xlabel('Spool Speed [rpm]');
-legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'NorthWest');
+legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
 plotfixer
 
 % Velocity Plots
@@ -154,7 +154,7 @@ plot(rpm,U2,'b',rpm,U3,'c',rpm,U4,'m',rpm,U5,'r',rpm,U8,'g');
 title('Part 2: Station Velocity vs Spool Speed');
 ylabel('Velocity [m/s]');
 xlabel('Spool Speed [rpm]');
-legend('U02','U03','U04','U05','U08','NorthWest');
+legend('U02','U03','U04','U05','U08','Location', 'NorthWest');
 plotfixer
 
 % Mass Flow Plots
@@ -163,7 +163,7 @@ plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,air_fuel_ratio,'m
 title('Part 2: Mass flow Rates vs Spool Speed');
 ylabel('Mass FLow Rate [g/s]');
 xlabel('Spool Speed [rpm]');
-legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'NorthWest');
+legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'Location', 'NorthWest');
 plotfixer
 
 % Thrust Flow Plots
@@ -172,7 +172,7 @@ plot(rpm,Fthrust,'b', rpm,Fthrust_meas,'c');
 title('Part 2: Spool Speed vs Net Thrust and Measured Thrust ');
 ylabel('Thrust [N]');
 xlabel('Spool Speed [rpm]');
-legend('Fthrust (calculated)','Fthrust (measured)', 'NorthWest');
+legend('Fthrust (calculated)','Fthrust (measured)', 'Location', 'NorthWest');
 plotfixer
 
 % -------------------------------------------------------------
@@ -214,8 +214,8 @@ plotfixer
 % TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
 % NOZZLE (5->8): total-to-static
 
-Pin_compressor = find_dh( T02,T03 )
-Pout_turbine = find_dh( T04,T05 )
+Pin_compressor = find_dh( T02,T03 );
+Pout_turbine = find_dh( T04,T05 );
 
 % Compressor
 T03s = applyIsentropicTempVar( T02, P03./P02 );    % tt
@@ -237,11 +237,11 @@ for i = 1:length(T02)
     n_nozzle(i) =        integral( f_temp,T8(i),T05(i) )/integral( f_temp,T8s(i),T05(i) );
 end
 
-P0ratio_combustor = P04/P03;
+P0ratio_combustor = P04./P03;
 
 % Apparent Combustion Efficiency 
 Wdotin_air = mdot_air .* find_dh( T4,T5 );
-Wdotin_fuel = mdot_fuel .* LHV;
+Qdotin_fuel = mdot_fuel .* LHV;
 n_combustor_apparent = Wdotin_air./Qdotin_fuel;
 
 % Plot 
@@ -251,7 +251,7 @@ plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine), 'b');
 xlabel('Spool Speed (rpm)');
 ylabel('Power (Watts)');
 title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
-legend('Power into Compressor', 'Power Out of Turbine', 'NorthWest');
+legend('Power into Compressor', 'Power Out of Turbine', 'Location', 'NorthWest');
 plotfixer
 
 % Adiabatic Efficiency Plots
@@ -259,8 +259,9 @@ figure(11)
 plot(rpm, n_compressor, 'r', rpm, n_turbine, 'b', rpm, n_nozzle, 'm');
 title('Efficiency of Compressor, Turbine, Nozzle vs Spool Speed');
 xlabel('Spool Speed (rpm)');
-ylabel('Power (Watts)');
+ylabel('Efficiency');
 legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
+plotfixer
 
 % Stagnation Pressure Ratio Across Combustor
 figure(12)
@@ -268,11 +269,13 @@ plot(rpm, P0ratio_combustor, 'g');
 title('Stagnation Pressure Across Combustor vs Spool Speed');
 xlabel('Spool Speed (rpm)');
 ylabel('Stagnation Pressure Ratio, P04/P03');
+plotfixer
 
 % Apparent Combustion Efficiency 
 figure(13)
-plot(rpm, P0ratio_combustor, 'g');
+plot(rpm, n_combustor_apparent, 'g');
 title('Apparent Combustion Efficiency vs Spool Speed');
 xlabel('Spool Speed (rpm)');
-ylabel('n_combustor_apparent');
+ylabel('Apparent Combustor Efficiency');
+plotfixer
 

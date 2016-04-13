@@ -7,10 +7,9 @@ function [ T2 ] = applyIsentropicTempVar( T1, P2_by_P1)
 % ASSUME: isentropic
 error = 1E-4;
 R = 287;                        % [J/kg*K]
-KJ_TO_J = 1000;
 
 %Function definitions for integral helpers, etc.
-f_temp = @(x) sp_heats(x).*KJ_TO_J./x; %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+f_temp = @(x) sp_heats(x)./x; %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
 RHS = @(a,b) integral(f_temp,a,b);
 
 %Array initializations
