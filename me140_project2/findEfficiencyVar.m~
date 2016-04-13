@@ -1,0 +1,70 @@
+function [ n ] = findEfficiencyVarCompressor( T )
+
+error = 1E-4;
+
+eta_compressor = (h03s - h02)/(h03 - h02);
+eta_turbine = (h04 - h05)/(h04 - h05s);
+eta_nozzle = (h05 - h8)/(h05 - h8s);
+
+dT = 0.01;
+speed_ratio = 1000;
+f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+LHS = @(a,b) integral(f_temp,a,b);
+RHS = @(a,b) integral(f_temp,a,b) ./ n;
+
+        %Array initializations
+        T_output = zeros(1,length(T_known));
+
+        switch T_unknown
+
+            
+            case c.T02a
+                T01a = T_known(1,:);
+                T02s = T_known(2,:);
+                
+                for i = 1:length(T_known)
+                    T02a(i) = T01a(i)+dT;
+                    diff = LHS(T01a(i),T02a(i)) - RHS(T01a(i),T02s(i));
+                    iterations = 0;
+                    while(abs(diff) > error)
+                        T02a(i) = T02a(i) - diff./speed_ratio;
+                        diff = LHS(T01a(i),T02a(i)) - RHS(T01a(i),T02s(i));
+                        iterations = iterations + 1;
+                    end
+                    %iterations
+                    %syms T02a_var;
+                    %T_output(i) = solve(n==(T02s(i)-T01a(i))./(T02a_var-T01a(i)),T02a_var);
+                end
+                T_output = T02a;
+                
+                % ------
+                
+                
+                
+                % Note: This case is different that other two (only applies to
+                % turbine) negative signs switched to indicate lowering temperature
+            case c.T02s
+                T01a = T_known(1,:);
+                T02a = T_known(2,:);
+                T02s = zeros(1,2);
+                diff = zeros(1,2);
+                
+                for i = 1:length(T01a)
+                    
+                    T02s(i) = T01a(i)-dT;
+                    diff(i) = LHS(T02s(i),T01a(i)) - RHS(T02a(i),T01a(i));
+                    iterations = 0;
+                    while(abs(diff(i)) > error )
+                        T02s(i) = T02s(i) + diff(i)./1E4;
+                        diff(i) = LHS(T02s(i), T01a(i)) - RHS(T02a(i),T01a(i));
+                        iterations = iterations + 1;
+                    end
+                end
+                T_output = T02s;
+                % -----
+            otherwise
+                print('Invalid T_unknown. Enter T01a, T02a, or T02s.');
+        end
+end
+
+
