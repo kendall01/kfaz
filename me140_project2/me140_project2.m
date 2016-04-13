@@ -89,7 +89,7 @@ mdot_total = mdot_air + mdot_fuel;
 
 % Station 4 (before bend to turbine inlet)
 P04_guess = P4;                                 % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
-[T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total, A4, P04_guess,T4m,RFcross);
+[T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total,A4,T4m,P04_guess,RFcross);
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));     % Use P4,T4,T04 to find REAL P04
 
 % Station 5 (turbine outlet)                                  
