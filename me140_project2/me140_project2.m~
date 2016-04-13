@@ -234,15 +234,15 @@ n_nozzle =     zeros(length(T02),1);
 for i = 1:length(T02)    
     n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
     n_turbine(i) =    integral( f_temp,T05(i),T04(i) )/integral( f_temp,T05s(i),T04(i) );
-    n_nozzle(i) =        integral( f_temp,T8(i),T05(i) )/integral( f_temp,T8s(i),T05(i) );
+    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp,T8s(i),T05(i) );
 end
 
 P0ratio_combustor = P04./P03;
 
 % Apparent Combustion Efficiency 
-Wdotin_air = mdot_air .* find_dh( T4,T5 );
+Wdotin_air = mdot_air .* find_dh( T03,T04 );
 Qdotin_fuel = mdot_fuel .* LHV;
-n_combustor_apparent = Wdotin_air./Qdotin_fuel;
+n_combustor_apparent = abs(Wdotin_air)./Qdotin_fuel;
 
 % Plot 
 % Power Plots
