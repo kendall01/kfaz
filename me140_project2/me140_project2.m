@@ -14,8 +14,7 @@ IN2_TO_M2 = 6.4516*10^-4;
 KPA_TO_PA = 10^3;
 KG_TO_G = 10^3;
 KJ_TO_J = 10^3;
-R = 287.058;                                           % J/(kg*K)
-
+R = 287.058;                                            % J/(kg*K)
 
 % DATA:
 % ------
@@ -38,7 +37,6 @@ P03 = me140_project2_data(9)' .* KPA_TO_PA + Patm ;    % P03 [absolute] [Pa]
 P4 =  me140_project2_data(10)' .* KPA_TO_PA + Patm;    % P4 (static) [absolute] 
 P05 = me140_project2_data(11)' .* KPA_TO_PA + Patm;    % P05 [absolute]   
 P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    % P08 [absolute]   
-
 
 % GIVEN:
 % ------
@@ -216,8 +214,8 @@ plotfixer
 % TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
 % NOZZLE (5->8): total-to-static
 
-Pin_compressor = find_dh( T02,T03 );
-Pout_turbine = find_dh( T04,T05 );
+Pin_compressor = find_dh( T02,T03 )
+Pout_turbine = find_dh( T04,T05 )
 
 % Compressor
 T03s = applyIsentropicTempVar( T02, P03./P02 );    % tt
@@ -227,6 +225,7 @@ T05s = applyIsentropicTempVar( T04, P05./P04 );    % tt
 
 % Nozzle
 T8s = applyIsentropicTempVar ( T05, P8./P05 );     % ts
+
 
 f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
 n_compressor = zeros(length(T02),1);
@@ -238,10 +237,15 @@ for i = 1:length(T02)
     n_nozzle(i) =        integral( f_temp,T8(i),T05(i) )/integral( f_temp,T8s(i),T05(i) );
 end
 
-Pratio_combustor = P04/P03;
+P0ratio_combustor = P04/P03;
+
+% Apparent Combustion Efficiency 
+Wdotin_air = mdot_air .* find_dh( T4,T5 );
+Wdotin_fuel = mdot_fuel .* LHV;
+n_combustor_apparent = Wdotin_air./Qdotin_fuel;
 
 % Plot 
-
+% Power Plots
 figure(10)
 plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine), 'b');
 xlabel('Spool Speed (rpm)');
@@ -249,4 +253,26 @@ ylabel('Power (Watts)');
 title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
 legend('Power into Compressor', 'Power Out of Turbine', 'NorthWest');
 plotfixer
+
+% Adiabatic Efficiency Plots
+figure(11)
+plot(rpm, n_compressor, 'r', rpm, n_turbine, 'b', rpm, n_nozzle, 'm');
+title('Efficiency of Compressor, Turbine, Nozzle vs Spool Speed');
+xlabel('Spool Speed (rpm)');
+ylabel('Power (Watts)');
+legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
+
+% Stagnation Pressure Ratio Across Combustor
+figure(12)
+plot(rpm, P0ratio_combustor, 'g');
+title('Stagnation Pressure Across Combustor vs Spool Speed');
+xlabel('Spool Speed (rpm)');
+ylabel('Stagnation Pressure Ratio, P04/P03');
+
+% Apparent Combustion Efficiency 
+figure(13)
+plot(rpm, P0ratio_combustor, 'g');
+title('Apparent Combustion Efficiency vs Spool Speed');
+xlabel('Spool Speed (rpm)');
+ylabel('n_combustor_apparent');
 
