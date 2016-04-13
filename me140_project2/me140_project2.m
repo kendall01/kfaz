@@ -242,7 +242,7 @@ P0ratio_combustor = P04./P03;
 % Apparent Combustion Efficiency 
 Wdotin_air = mdot_air .* find_dh( T4,T5 );
 Qdotin_fuel = mdot_fuel .* LHV;
-n_combustor_apparent = Wdotin_air./Qdotin_fuel;
+n_combustor_apparent = abs(Wdotin_air)./Qdotin_fuel;
 
 % Plot 
 % Power Plots
