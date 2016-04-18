@@ -16,7 +16,7 @@ R = 287;
 % Initializations
 T0guess = Tm;
 T0 = T0guess + 2 * error;
-[~,~,k] = sp_heats_mix(T0guess AF);     
+[~,~,k] = sp_heats_mix(T0guess,AF);     
 
 while abs(T0-T0guess)>error;
     % (b) Find MFP via Eq. (1)
@@ -39,7 +39,7 @@ while abs(T0-T0guess)>error;
 
     % update
     T0guess = T0;
-    [~,~,k] = sp_heats_mix(T AF); 
+    [~,~,k] = sp_heats_mix(T,AF); 
 end
 
 U = Ma.*sqrt(k.*R.*T0);
