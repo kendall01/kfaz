@@ -49,7 +49,7 @@ RFaxial = linspace(.86, .86, length(rpm))';            % Reference Factor axial
 HC_ratio = [1.8 2.17];
 M = [170 170];
 latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J];        % latent heat of vaporization
-LHV0 = [42800*KJ_TO_J 44560*KJ_TO_J];                  % vapor, J/kg
+LHV = [42800*KJ_TO_J, 44560*KJ_TO_J];                  % vapor, J/kg
 hf0 = [0 -1712];                                       % vapor, enthalpy of formation J/kg (replace 0 later)
 % hf0(1) = ???
 
@@ -129,7 +129,7 @@ u_in = U1;
 u_out = U8;
 Fthrust = (mdot_total .* u_out) - (mdot_air .* u_in);
 ST = Fthrust./mdot_total;
-Qdot = mdot_fuel.*LHV;                  
+Qdot = mdot_fuel.*LHV(1);                  
 TSFC = mdot_fuel./Fthrust;
 
 % PART 2: PLOTS
@@ -176,7 +176,7 @@ plotfixer
 
 % Mass Flow Plots
 figure(5)
-plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,air_fuel_ratio,'m');
+plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,AF,'m');
 title('Part 2: Mass flow Rates vs Spool Speed');
 ylabel('Mass FLow Rate [g/s]');
 xlabel('Spool Speed [rpm]');

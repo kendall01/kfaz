@@ -43,9 +43,9 @@ P(2,:) = [a(2) b(2) c(2) d(2)];
 P(3,:) = [a(3) b(3) c(3) d(3)];
 P(4,:) = [a(4) b(4) c(4) d(4)];
 
-cp_m = zeros(length(T),1);
-cv_m = zeros(length(T),1);
-gamma_m = zeros(length(T),1);
+cp_m = 0;
+cv_m = 0;
+gamma_m = 0;
 for row = 1:length(T)
     for spc = 1:length(P)
     % Find Cp for each Species
@@ -57,7 +57,7 @@ for row = 1:length(T)
 
     cp_m(row) = cp_m(row) + mf(row,spc)*cp;
     cv_m(row) = cv_m(row) + mf(row,spc)*cv;
-    gamma_m(row) = cp_m(row)./cv_m(row);
+    gamma_m(row) = cp_m./cv_m;
     end
 
 end
