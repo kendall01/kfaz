@@ -8,8 +8,6 @@ d = -1.966E-9;
 molar_mass_air = .02897;
 R = 287;                        % [J/kg*K]
 
-
-
 P = [d,c,b,a];
 
 cp = polyval(P,T);

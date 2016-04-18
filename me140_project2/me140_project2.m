@@ -89,7 +89,7 @@ air_fuel_ratio = mdot_air ./ mdot_fuel;
 % Station 3 (compressor exit)
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
 
-% Station 4 (before bend to turbine inlet)
+% Station 4 (after combustor, before bend to turbine inlet)
 P04_guess = P4;                                         % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
 [T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total,A4,T4m,P04_guess,RFcross);
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));       
