@@ -11,18 +11,18 @@ function [cp_m, cv_m, gamma_m, cp_co2, cp_h2o, cp_n2, cp_o2] = sp_heats_mix(T,ph
 R = 287;                        % [J/kg*K]
 N_to_O = 79/21;                 % Engineering Air Molar Mass Ratio of Nitrogen to Oxygen
 
-a = [22.26 32.24 28.9 25.48];
+a = [22.26 32.24 28.9 25.48]; %[kJ/kmol-K]
 b = [5.981*10^-2 0.1923*10^-2 -0.1571*10^-2 1.52*10^-2];
 c = [-3.501*10^-5 1.055*10^-5 0.8081*10^-5 -0.7155*10^-5];
 d = [7.469*10^-9 -3.595*10^-9 -2.873*10^-9 1.312*10^-9];
 
 % Molar Mass of Each Species
-MC = 12;
+MC = 12; %[g/mol]
 MH = 1;
 MO = 16;
 MN = 14;
 M = [MC+2*MO 2*MH+MO 2*MN 2*MO];    % mores sig figs?
-Mtotal = sum(M);
+Mtotal = sum(M); %[g/mol]
 
 % Moles of Each Species (LEC 5,slide 8 [ASSUME: fuel-lean] )
 N = [ phi, 2*phi, linspace(2*N_to_O, 2*N_to_O, length(phi))', 2*(1-phi) ]; 
@@ -37,10 +37,10 @@ for i = 1: size(N,2) %number of columns in N
 end
 
 P = zeros(4,4);
-P(1,:) = [a(1) b(1) c(1) d(1)];
-P(2,:) = [a(2) b(2) c(2) d(2)];
-P(3,:) = [a(3) b(3) c(3) d(3)];
-P(4,:) = [a(4) b(4) c(4) d(4)];
+P(s.CO2,:) = [a(1) b(1) c(1) d(1)];
+P(s.H2O,:) = [a(2) b(2) c(2) d(2)];
+P(s.N2,:) = [a(3) b(3) c(3) d(3)];
+P(s.O2,:) = [a(4) b(4) c(4) d(4)];
 
 cp_m = zeros(size(T));
 cv_m = zeros(size(T));
