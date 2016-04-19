@@ -45,6 +45,10 @@ P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    % P08 [absolute]
 % ------
 RFcross = linspace(.68, .68, length(rpm))';            % Reference Factor cross-section
 RFaxial = linspace(.86, .86, length(rpm))';            % Reference Factor axial
+hf_co2 =  -393.509 * KJ_TO_J;                          % [kJ/mol]
+hf_h2o =  -241.818 * KJ_TO_J;
+hf_n2  = 0         * KJ_TO_J;
+hf_o2  = 0         * KJ_TO_J;
 
 % Jet A (Kerosene) vs. Dodecane (C12H26)
 HC_ratio = [1.8 2.17];
@@ -66,7 +70,6 @@ A8 = linspace(3.87, 3.87, length(rpm))' .* IN2_TO_M2;  % Area of nozzle exit
 
 % CALCULATIONS:
 % -------------
-
 % -------------------------------------------------------------
 % PART 1: Redo Project 2 with REAL products after the combustor
 % --------------------------------------------------------------
@@ -263,6 +266,12 @@ for i = 1:length(T02)
 end
 
 P0ratio_combustor = P04./P03;
+
+% -----------------------------------------------------
+% PART 3: Turbine Power using Adiabatic Burned Gas Temp
+% -----------------------------------------------------
+[hjetA_part3, TP_part3] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, LHV, Mfuel, T03 )
+Pout_turbine_part3 = find_dh_mix( TP_part3,T05,AF );
 
 % Plot 
 % Power Plots
