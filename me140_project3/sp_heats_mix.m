@@ -35,14 +35,11 @@ for i = 1: length(N(1,:))
     mf(:,i) = ( y(:,i)*M(i) )/Mtotal;
 end
 
-
-
 P = zeros(4,4);
 P(1,:) = [a(1) b(1) c(1) d(1)];
 P(2,:) = [a(2) b(2) c(2) d(2)];
 P(3,:) = [a(3) b(3) c(3) d(3)];
 P(4,:) = [a(4) b(4) c(4) d(4)];
-
 
 cp_m = zeros(size(T));
 cv_m = zeros(size(T));
@@ -57,8 +54,7 @@ for col = 1:size(T,2)
         cp = cp ./ M(spc); %convert from KJ/kmol-K to J/kg-K
         cv = cp - (R); %R converted to J/kg-K
 
-        % Find
-
+        % Find Cp for Mixture
         cp_m(row, col) = cp_m(row, col) + mf(row,spc)*cp;
         cv_m(row, col) = cv_m(row, col) + mf(row,spc)*cv;
         gamma_m(row, col) = cp_m(row, col)./cv_m(row, col);
