@@ -270,8 +270,7 @@ P0ratio_combustor = P04./P03;
 % PART 1: Turbine Power Mixed vs. Project #2 
 % ------------------------------------------
 %Pout_turbine 
-j = batch('../me140_project2/me140_project2.m');
-return
+
 % ---------------------------------
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
@@ -313,5 +312,4 @@ xlabel('Spool Speed (rpm)');
 ylabel('Stagnation Pressure Ratio, P04/P03');
 if plotfixing; plotfixer; end
 
-j = batch('../me140_project2/me140_project2.m');
 
