@@ -45,7 +45,7 @@ P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    % P08 [absolute]
 % ------
 RFcross = linspace(.68, .68, length(rpm))';            % Reference Factor cross-section
 RFaxial = linspace(.86, .86, length(rpm))';            % Reference Factor axial
-hf_co2 =  -393.509 * KJ_TO_J;                          % [kJ/mol]
+hf_co2 =  -393.509 * KJ_TO_J;                          % [J/mol]
 hf_h2o =  -241.818 * KJ_TO_J;
 hf_n2  = 0         * KJ_TO_J;
 hf_o2  = 0         * KJ_TO_J;
@@ -302,4 +302,5 @@ xlabel('Spool Speed (rpm)');
 ylabel('Stagnation Pressure Ratio, P04/P03');
 if plotfixing; plotfixer; end
 
+j = batch('../me140_project2/me140_project2.m');
 

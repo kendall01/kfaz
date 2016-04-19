@@ -1,4 +1,4 @@
-function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, LHV, Mfuel )
+function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV, Mfuel, TR )
 % INPUTS:
 % --------
 % h_co2 and h_h2o (from Tables in units of KJ/mol)
@@ -13,9 +13,9 @@ function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, 
 % 
 
 % CONSTANTS
+
 CELSIUS_TO_KELVIN = 273.15;
 T0 = 25 + CELSIUS_TO_KELVIN;    % Reference Temperature, [K] 
-TR = 300;                       % Temperature of Reactants, [K]
 error = 1E-4;
 diff = 0.01;
 speedFactor = 10;
@@ -24,13 +24,15 @@ N_to_O = 79/21;                 % Engineering Air Molar Mass Ratio of Nitrogen t
 
 % Find Formation Enthalpy (ASSUME: phi = 1, LEC 5,SLIDE 24) 
 % ---------------------------------------------------------
-dh_jetA = find_dh_mix(T0, TR, AF); %not correct, needs to refer to a new specific heats function that goes through the molar masses of the species in jet fuel
+phi = 1;
+dh_jetA = find_dh_jetA(T0, TR, phi); %not correct, needs to refer to a new specific heats function that goes through the molar masses of the species in jet fuel
 Q = LHV*Mfuel;
 hf_jetA = -dh_jetA + 12.3*h_co2 + 11.1*h_h2o + Q; % enthaply of formation, jetA
 
-% Find Adiabatic Flame Temperature (ASSUME: Q = 0, LEC 5,SLIDE 8)
+% Find Adiabatic Flame Temperature (ASSUME: phi = linspace, Q = 0, LEC 5,SLIDE 8)
 % ---------------------------------------------------------------
-% 5 SPECIES: (1)jet A, (2)co2, (3)h20, (4)n2, (5)o2 
+% 5 SPECIES: (1)jet A, (2)co2, (3)h20, (4)n2, (5)o2  - not really the case
+% anymore as written
 
 %Function definitions for integral helpers
 % ------------------------------
@@ -68,7 +70,8 @@ for p = 0:length(phi)
     % for
     while(abs(diff) > error)
         T2 = T2 - diff./speedFactor;
-        diff = RHS(T1,T2) - LHS;
+        RHS = find_dh_mix(T1,T2,phi(p));
+        diff = RHS - LHS;
         iterations = iterations + 1;
     end
     iterations
