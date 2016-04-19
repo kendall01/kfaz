@@ -1,4 +1,4 @@
-function [cp_m, cv_m, gamma_m, cp_co2, cp_h2o, cp_n2, cp_o2] = sp_heats_mix(T,phi)
+function [cp_m, cv_m, gamma_m, cp_co2, cp_h2o, cp_n2, cp_o2] = sp_heats_mix_new(T,phi)
 % Note: 
 % (i) For this entire code refer to each species in the
 % --- produces by these numbers:
@@ -26,13 +26,12 @@ Mtotal = sum(M);
 
 % Moles of Each Species (LEC 5,slide 8 [ASSUME: fuel-lean] )
 N = [ phi, 2*phi, linspace(2*N_to_O, 2*N_to_O, length(phi))', 2*(1-phi) ]; 
-Ntotal = sum(N,2); %Sums along vertical dimension
-
+Ntotal = sum(N,1); %Sums along vertical dimension
 
 % Mole Fraction of Each Species
 
-for i = 1: size(N,2) %number of columns in N
-    y(:, i) = N(:,i)./Ntotal;
+for i = 1: length(N(1,:))
+    y(:, i) = N(:,i)./Ntotal(i);
     mf(:,i) = ( y(:,i)*M(i) )/Mtotal;
 end
 
@@ -44,11 +43,11 @@ P(4,:) = [a(4) b(4) c(4) d(4)];
 
 cp_m = zeros(size(T));
 cv_m = zeros(size(T));
+cp_ = zeros(size(T));
+cv_m = zeros(size(T));
+cv_m = zeros(size(T));
+cv_m = zeros(size(T));
 gamma_m = zeros(size(T));
-cp_co2 = zeros(size(T));
-cp_h2o = zeros(size(T));
-cp_n2 = zeros(size(T));
-cp_o2 = zeros(size(T));
 
 for col = 1:size(T,2)
 
@@ -62,7 +61,7 @@ for col = 1:size(T,2)
         switch spc
             case s.CO2
                 cp_co2(row,col) = cp;
-            case s.H2O
+            case s.h2o
                 cp_h2o(row,col) = cp;
             case s.N2
                 cp_n2(row,col) = cp;

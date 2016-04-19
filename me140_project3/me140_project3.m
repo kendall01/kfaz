@@ -54,6 +54,7 @@ LHV = [42800*KJ_TO_J, 44560*KJ_TO_J];                  % vapor, J/kg
 hf0 = [0 -1712];                                       % vapor, enthalpy of formation J/kg (replace 0 later)
 % hf0(1) = ???
 
+
 % Areas [m^2]
 A1 = linspace(27.3, 27.3, length(rpm))' .* IN2_TO_M2;  % Flow area at inlet of bellmouth
 A2 = linspace(6.4, 6.4, length(rpm))'   .* IN2_TO_M2;  % Effective flow area at pitot-static probe
