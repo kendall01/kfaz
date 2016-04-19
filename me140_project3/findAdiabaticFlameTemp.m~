@@ -1,4 +1,4 @@
-function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, LHV, Mfuel )
+function [ h_jetA, TP ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, LHV, Mfuel, TR )
 % INPUTS:
 % --------
 % h_co2 and h_h2o (from Tables in units of KJ/mol)
@@ -13,9 +13,9 @@ function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, 
 % 
 
 % CONSTANTS
+
 CELSIUS_TO_KELVIN = 273.15;
 T0 = 25 + CELSIUS_TO_KELVIN;    % Reference Temperature, [K] 
-TR = 300;                       % Temperature of Reactants, [K]
 error = 1E-4;
 diff = 0.01;
 speedFactor = 10;
@@ -68,7 +68,8 @@ for p = 0:length(phi)
     % for
     while(abs(diff) > error)
         T2 = T2 - diff./speedFactor;
-        diff = RHS(T1,T2) - LHS;
+        RHS = find_dh_mix(T1,T2,phi(p));
+        diff = RHS - LHS;
         iterations = iterations + 1;
     end
     iterations
