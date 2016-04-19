@@ -9,7 +9,7 @@ function [ T,T0,Ma,U,k ] = findMaTemps_mix( mdot,A,Tm,P0,RF,AF )
 % vectors as illustrated: findMaTemps([mdot_a; mdot_b], [A_a; A_b], [Tm_a;
 % Tm_b], [P0_a; P0_b], [RF_a; RF_b])
 
-error = 0.01;
+error = 0.0001;
 R = 287;
 
 % (a) Assume: T0guess = Tm 
@@ -17,8 +17,9 @@ R = 287;
 T0guess = Tm;
 T0 = T0guess + 2 * error;
 [~,~,k] = sp_heats_mix(T0guess,AF);     
-
 while abs(T0-T0guess)>error;
+        T0guess = T0;
+
     % (b) Find MFP via Eq. (1)
     MFP = (mdot./A).*sqrt(R.*T0guess)./P0;
 
@@ -38,7 +39,6 @@ while abs(T0-T0guess)>error;
     T0 = T.*(1+((k-1)./2).*Ma.^2);
 
     % update
-    T0guess = T0;
     [~,~,k] = sp_heats_mix(T,AF); 
 end
 
