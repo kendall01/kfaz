@@ -1,4 +1,4 @@
-function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV, Mfuel, TR )
+function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h2o, h_n2, h_o2, LHV, Mfuel, TR )
 % INPUTS:
 % --------
 % h_co2 and h_h2o (from Tables in units of KJ/mol)
@@ -41,9 +41,9 @@ hf_jetA = -dh_jetA + 12.3*h_co2 + 11.1*h_h2o + Q; % enthaply of formation, jetA
 
 
 % Enthalpies of Formation of the Products
-hf = [h_co2, h_h20, h_n2, h_o2 ];
+hf = [h_co2, h_h2o, h_n2, h_o2 ];
 
-phi = linspace(0.05, 0.65);
+phi = linspace(0.05, 0.65)';
 % Find Molar Flow Rates
 N = [phi, 2*phi, linspace(2*N_to_O, 2*N_to_O, length(phi))', 2*(1-phi) ]; 
 sum = N * hf'; %intentional matrix multiplication multiplies and sums as desired.
@@ -60,7 +60,8 @@ for p = 0:length(phi)
     T1 = T0;
     T2 = T1 + .01;
     
-    diff = RHS(T1,T2) - LHS; %not correct, needs n_dot
+    RHS = find_dh_mix(T1,T2,phi(p));
+    diff = RHS - LHS; %not correct, needs n_dot
     iterations = 0;
     
     % ----------------------------------------------------------------

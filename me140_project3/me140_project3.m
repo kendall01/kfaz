@@ -270,12 +270,13 @@ P0ratio_combustor = P04./P03;
 % PART 1: Turbine Power Mixed vs. Project #2 
 % ------------------------------------------
 %Pout_turbine 
-
+j = batch('../me140_project2/me140_project2.m');
+return
 % ---------------------------------
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
 TR = 300; % [K]
-[ h_jetA, TP ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV(1), Mfuel(1), TR );
+[ h_jetA, TP ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR );
 
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
