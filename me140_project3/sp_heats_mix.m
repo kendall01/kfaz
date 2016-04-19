@@ -26,7 +26,7 @@ Mtotal = sum(M);
 
 % Moles of Each Species (LEC 5,slide 8 [ASSUME: fuel-lean] )
 N = [ phi, 2*phi, linspace(2*N_to_O, 2*N_to_O, length(phi))', 2*(1-phi) ]; 
-Ntotal = sum(N);
+Ntotal = sum(N,1); %Sums along vertical dimension
 
 % Mole Fraction of Each Species
 
@@ -43,24 +43,31 @@ P(2,:) = [a(2) b(2) c(2) d(2)];
 P(3,:) = [a(3) b(3) c(3) d(3)];
 P(4,:) = [a(4) b(4) c(4) d(4)];
 
-cp_m = zeros(length(T),1);
-cv_m = zeros(length(T),1);
-gamma_m = zeros(length(T),1);
-for row = 1:length(T)
-    for spc = 1:length(P)
-    % Find Cp for each Species
-    cp = polyval(P(spc,:),T(row));
-    cp = cp ./ M(spc); %convert from KJ/kmol-K to J/kg-K
-    cv = cp - (R); %R converted to J/kg-K
 
-    % Find
+cp_m = zeros(size(T));
+cv_m = zeros(size(T));
+gamma_m = zeros(size(T));
 
-    cp_m(row) = cp_m(row) + mf(row,spc)*cp;
-    cv_m(row) = cv_m(row) + mf(row,spc)*cv;
-    gamma_m(row) = cp_m(row)./cv_m(row);
+for col = 1:size(T,2)
+
+    for row = 1:size(T,1) %Size returns number of rows in T
+        for spc = 1:length(P)
+        % Find Cp for each Species
+        cp = polyval(P(spc,:),T(row, col));
+        cp = cp ./ M(spc); %convert from KJ/kmol-K to J/kg-K
+        cv = cp - (R); %R converted to J/kg-K
+
+        % Find
+
+        cp_m(row, col) = cp_m(row, col) + mf(row,spc)*cp;
+        cv_m(row, col) = cv_m(row, col) + mf(row,spc)*cv;
+        gamma_m(row, col) = cp_m(row, col)./cv_m(row, col);
+        end
+
     end
-
+    
 end
+
 
 
 
