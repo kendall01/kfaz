@@ -19,10 +19,12 @@ TR = 300;                       % Temperature of Reactants, [K]
 error = 1E-4;
 diff = 0.01;
 speedFactor = 10;
+N_to_O = 79/21;                 % Engineering Air Molar Mass Ratio of Nitrogen to Oxygen
+
 
 % Find Formation Enthalpy (ASSUME: phi = 1, LEC 5,SLIDE 24) 
 % ---------------------------------------------------------
-dh_jetA = find_dh_mix(T0, TR, AF);
+dh_jetA = find_dh_mix(T0, TR, AF); %not correct, needs to refer to a new specific heats function that goes through the molar masses of the species in jet fuel
 Q = LHV*Mfuel;
 hf_jetA = -dh_jetA + 12.3*h_co2 + 11.1*h_h2o + Q; % enthaply of formation, jetA
 
@@ -46,23 +48,16 @@ cp_o2 = @(a,b) integral(f_temp_o2,a,b);
 
 RHS = @(a,b) cp_co2(a,b) + cp_h2o(a,b) + cp_n2(a,b) + cp_o2(a,b);
 
-% Enthalpies of Formation
-hf = [ hf_jetA, h_co2, h_h20, h_n2, h_o2 ];
+% Enthalpies of Formation of the Products
+hf = [h_co2, h_h20, h_n2, h_o2 ];
 
-numSpecies = 5;                     
 phi = linspace(0.05, 0.65);
-N = zeros(length(phi),numSpecies);
+% Find Molar Flow Rates
+N = [phi, 2*phi, linspace(2*N_to_O, 2*N_to_O, length(phi))', 2*(1-phi) ]; 
+sum = N * hf'; %intentional matrix multiplication multiplies and sums as desired.
 for p = 0:length(phi)
-    % Find Molar Flow Rates
-    N(p,1) = phi(p);
-    N(p,2) = phi(p);
-    N(p,3) = 2*phi(p);
-    N(p,4) = 2*3.76;
-    N(p,5) = 2*(1-phi(p));
-    
-    for s = 1:numSpecies
-        sum = sum + N(p,s)*hf(s);
-    end
+
+
     
     % Solve for Tp (ASSUME: Q = 0, adiabatic)
     % LHS: hf_jetA + dh_jetA - sum( N(i)*hf(i) )
@@ -73,8 +68,7 @@ for p = 0:length(phi)
     T1 = T0;
     T2 = T1 + .01;
     
-    RHS = RHS(T1,T2);
-    diff = RHS - LHS;
+    diff = RHS(T1,T2) - LHS; %not correct, needs n_dot
     iterations = 0;
     
     % ----------------------------------------------------------------
