@@ -1,4 +1,4 @@
-function [ T,T0,Ma,U,k ] = findMaTemps( mdot,A,Tm,P0,RF )
+function [ T,T0,Ma,U,k ] = findMaTemps_mix( mdot,A,Tm,P0,RF,AF )
 % ASSUME: Constant Cp,Cv - because we are operating at low Mach numbers, 
 % we can assume the difference between assuming constant gamma and varrying
 % gamma is small. 
@@ -16,7 +16,7 @@ R = 287;
 % Initializations
 T0guess = Tm;
 T0 = T0guess + 2 * error;
-[~,~,k] = sp_heats(T0guess);     
+[~,~,k] = sp_heats_mix(T0guess AF);     
 
 while abs(T0-T0guess)>error;
     % (b) Find MFP via Eq. (1)
@@ -39,7 +39,7 @@ while abs(T0-T0guess)>error;
 
     % update
     T0guess = T0;
-    [~,~,k] = sp_heats(T); 
+    [~,~,k] = sp_heats_mix(T AF); 
 end
 
 U = Ma.*sqrt(k.*R.*T0);

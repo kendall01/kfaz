@@ -20,6 +20,8 @@ T0 = T0guess + 2 * error;
 
 while abs(T0-T0guess)>error;
     % (b) Find MFP via Eq. (1)
+    T0guess = T0;
+
     MFP = (mdot./A).*sqrt(R.*T0guess)./P0;
 
     % (c) Determine Ma that satisfies Eq. (2)
@@ -38,7 +40,6 @@ while abs(T0-T0guess)>error;
     T0 = T.*(1+((k-1)./2).*Ma.^2);
 
     % update
-    T0guess = T0;
     [~,~,k] = sp_heats(T); 
 end
 
