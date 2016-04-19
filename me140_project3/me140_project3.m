@@ -52,11 +52,10 @@ hf_o2  = 0         * KJ_TO_J;
 
 % Jet A (Kerosene) vs. Dodecane (C12H26)
 HC_ratio = [1.8 2.17];
-M = [170 170];
+Mfuel = [170 170];
 latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J];        % latent heat of vaporization
 LHV = [42800*KJ_TO_J, 44560*KJ_TO_J];                  % vapor, J/kg
 hf0 = [0 -1712];                                       % vapor, enthalpy of formation J/kg (replace 0 later)
-% hf0(1) = ???
 AFs = 14.43;                    % stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)
 
 
@@ -267,11 +266,22 @@ end
 
 P0ratio_combustor = P04./P03;
 
+% ------------------------------------------
+% PART 1: Turbine Power Mixed vs. Project #2 
+% ------------------------------------------
+%Pout_turbine 
+
+% ---------------------------------
+% PART 2: hf & Adiabatic Flame Temp
+% ---------------------------------
+TR = 300; % [K]
+[ h_jetA, TP ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV(1), Mfuel(1), TR );
+
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
 % -----------------------------------------------------
-[hjetA_part3, TP_part3] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, LHV, Mfuel, T03 )
-Pout_turbine_part3 = find_dh_mix( TP_part3,T05,AF );
+[hjetA_part3, TP_part3] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV, Mfuel, T03 );
+Pout_turbine_part3 = find_dh_mix( TP_part3,T05,AF./AF );
 
 % Plot 
 % Power Plots
