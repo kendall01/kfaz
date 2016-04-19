@@ -57,6 +57,7 @@ latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J];        % latent heat of vaporiza
 LHV = [42800*KJ_TO_J, 44560*KJ_TO_J];                  % vapor, J/kg
 hf0 = [0 -1712];                                       % vapor, enthalpy of formation J/kg (replace 0 later)
 % hf0(1) = ???
+AFs = 14.43;                    % stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)
 
 
 % Areas [m^2]
@@ -242,8 +243,8 @@ if plotfixing; plotfixer; end
 % TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
 % NOZZLE (5->8): total-to-static
 
-Pin_compressor = find_dh_mix( T02,T03,AF );
-Pout_turbine = find_dh_mix( T04,T05,AF );
+Pin_compressor = find_dh_mix( T02,T03,AFs./AF );
+Pout_turbine = find_dh_mix( T04,T05,AFs./AF );
 
 % Compressor
 T03s = applyIsentropicTempVar( T02, P03./P02 );    % tt

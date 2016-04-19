@@ -1,4 +1,4 @@
-function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, LHV, Mfuel )
+function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, LHV, Mfuel, TR )
 % INPUTS:
 % --------
 % h_co2 and h_h2o (from Tables in units of KJ/mol)
@@ -13,9 +13,9 @@ function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, 
 % 
 
 % CONSTANTS
+
 CELSIUS_TO_KELVIN = 273.15;
 T0 = 25 + CELSIUS_TO_KELVIN;    % Reference Temperature, [K] 
-TR = 300;                       % Temperature of Reactants, [K]
 error = 1E-4;
 diff = 0.01;
 speedFactor = 10;
@@ -36,17 +36,7 @@ hf_jetA = -dh_jetA + 12.3*h_co2 + 11.1*h_h2o + Q; % enthaply of formation, jetA
 % ------------------------------
 % TODO: WRITE THESE 4 FUNCTIONS!
 % ------------------------------
-f_temp_co2 = @(x) sp_heats_co2(x); 
-f_temp_h2o = @(x) sp_heats_h2o(x);
-f_temp_n2  = @(x) sp_heats_n2(x);
-f_temp_o2  = @(x) sp_heats_o2(x);
 
-cp_co2 = @(a,b) integral(f_temp_co2,a,b);
-cp_h2o = @(a,b) integral(f_temp_h2o,a,b);
-cp_n2  = @(a,b) integral(f_temp_n2,a,b);
-cp_o2 = @(a,b) integral(f_temp_o2,a,b);
-
-RHS = @(a,b) cp_co2(a,b) + cp_h2o(a,b) + cp_n2(a,b) + cp_o2(a,b);
 
 % Enthalpies of Formation of the Products
 hf = [h_co2, h_h20, h_n2, h_o2 ];
@@ -55,15 +45,15 @@ phi = linspace(0.05, 0.65);
 % Find Molar Flow Rates
 N = [phi, 2*phi, linspace(2*N_to_O, 2*N_to_O, length(phi))', 2*(1-phi) ]; 
 sum = N * hf'; %intentional matrix multiplication multiplies and sums as desired.
+
+% Solve for Tp (ASSUME: Q = 0, adiabatic)
+% LHS: hf_jetA + dh_jetA - sum( N(i)*hf(i) )
+% RHS: integral[ sum( Cp(i)(T')dT') ] from T0 to Tp + Q
+LHS = hf_jetA + dh_jetA - sum;
+
 for p = 0:length(phi)
 
 
-    
-    % Solve for Tp (ASSUME: Q = 0, adiabatic)
-    % LHS: hf_jetA + dh_jetA - sum( N(i)*hf(i) )
-    % RHS: integral[ sum( Cp(i)(T')dT') ] from T0 to Tp + Q
-    LHS = hf_jetA + dh_jetA - sum;
-    
     % Initializations
     T1 = T0;
     T2 = T1 + .01;
@@ -78,7 +68,8 @@ for p = 0:length(phi)
     % for
     while(abs(diff) > error)
         T2 = T2 - diff./speedFactor;
-        diff = RHS(T1,T2) - LHS;
+        RHS = find_dh_mix(T1,T2,phi(p));
+        diff = RHS - LHS;
         iterations = iterations + 1;
     end
     iterations
