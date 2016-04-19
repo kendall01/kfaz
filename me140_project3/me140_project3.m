@@ -263,6 +263,12 @@ end
 
 P0ratio_combustor = P04./P03;
 
+% -----------------------------------------------------
+% PART 3: Turbine Power using Adiabatic Burned Gas Temp
+% -----------------------------------------------------
+[hjetA_part3, TP_part3] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, AF, LHV, Mfuel, T03 )
+Pout_turbine_part3 = find_dh_mix( TP_part3,T05,AF );
+
 % Plot 
 % Power Plots
 figure(10)
