@@ -52,10 +52,10 @@ hf_o2  = 0         * KJ_TO_J;
 % Jet A (Kerosene) vs. Dodecane (C12H26)
 HC_ratio = [1.8 2.17];
 Mfuel = [170 170];
-latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J];        % latent heat of vaporization
-LHV = [42800*KJ_TO_J, 44560*KJ_TO_J];                  % vapor, J/kg
-hf0 = [0 -1712];                                       % vapor, enthalpy of formation J/kg (replace 0 later)
-AFs = 14.43;                    % stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)
+latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J ];        % latent heat of vaporization
+LHV = [42800*KJ_TO_J, 44560*KJ_TO_J, 42900*KJ_TO_J ];   % vapor, J/kg Jet-A, Dodecane, TS-1 (source:Aviation Tech Review)
+hf0 = [0 -1712];                                        % vapor, enthalpy of formation J/kg (replace 0 later)
+AFs = 14.43;                                            % stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)
 
 
 % Areas [m^2]
