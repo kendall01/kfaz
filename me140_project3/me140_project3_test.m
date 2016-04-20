@@ -114,8 +114,9 @@ phi = AFs./AF;
 % Station 4 (after combustor, before bend to turbine inlet)
 P04_guess = P4;                                         % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
 [T4,T04,Ma4,U4,k4] = findMaTemps_mix(mdot_total,A4,T4m,P04_guess,RFcross,AF);
+% T04 = 1.8*T04
+% T4 = 1.8*T4
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));       
-
 
 % Station 5 (turbine outlet)                                  
 [T5,T05,Ma5,U5,k5] = findMaTemps_mix(mdot_total,A5,T5m,P05,RFaxial,AF);
