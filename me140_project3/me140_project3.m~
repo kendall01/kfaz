@@ -332,7 +332,7 @@ if plotfixing; plotfixer; end
 
 % Turbine Power, 3 Ways
 figure(13)
-plot(rpm, abs(Pout_turbine_project3), 'g',rpm,abs(Pout_turbine_project2),'c',rpm,abs(Pout_turbine_300K),'m');
+plot(rpm, abs(Pout_turbine_project3), 'g',rpm,abs(Pout_turbine_project2),'c',rpm,abs(Pout_turbine_300K)*J_TO_KJ,'m');
 title('Turbine Power vs Spool Speed');
 xlabel('Spool Speed [rpm]');
 ylabel('Turbine Power [Watts]');
