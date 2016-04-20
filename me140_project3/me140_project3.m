@@ -34,8 +34,8 @@ T8m = me140_project2_data(6)' + C_TO_K;                 % T8m, cross-flow
 
 % Measured Pressures
 Patm = 101300;  
-dP2 = me140_project2_data(8)' .* KPA_TO_PA;            % dP2 = Pstag - Pstatic 
-P03 = me140_project2_data(9)' .* KPA_TO_PA + Patm ;    % P03 [absolute] [Pa]
+dP2 = me140_project2_data(8)'  .* KPA_TO_PA;            % dP2 = Pstag - Pstatic 
+P03 = me140_project2_data(9)'  .* KPA_TO_PA + Patm ;    % P03 [absolute] [Pa]
 P4 =  me140_project2_data(10)' .* KPA_TO_PA + Patm;    % P4 (static) [absolute] 
 P05 = me140_project2_data(11)' .* KPA_TO_PA + Patm;    % P05 [absolute]   
 P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    % P08 [absolute]   
@@ -104,6 +104,7 @@ MFP2 = findMFP(Ma2,k2);
 mdot_air = ( MFP2.*A2.*P02 )./sqrt(R.*T02);                 % USE: MFP = (mdot/A)*(sqrt(R*T0)/P0)
 mdot_total = mdot_air + mdot_fuel;
 AF = mdot_air ./ mdot_fuel;                                 % air fuel ratio
+phi = AFs./AF;
 
 % Station 3 (compressor exit)
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
@@ -238,29 +239,31 @@ if plotfixing; plotfixer; end
 % --------------------------------------------------------
 % Adiabatic Efficiencies
 % COMPRESSOR (2->3): total-to-total, Win,isentropic / Win,actual
+% COMBUSTOR (3->4)
 % TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
 % NOZZLE (5->8): total-to-static
 
-Pin_compressor = find_dh_mix( T02,T03,AFs./AF );
-Pout_turbine = find_dh_mix( T04,T05,AFs./AF );
+Pin_compressor = find_dh_mix( T02,T03,phi );
+Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
 
-% Compressor
-T03s = applyIsentropicTempVar( T02, P03./P02 );    % tt
+% Compressor Outlet
+T03s = applyIsentropicTempVar( T02, P03./P02 );       % tt
 
 % Turbine
-T05s = applyIsentropicTempVar( T04, P05./P04 );    % tt
+T05s = applyIsentropicTempVar_mix( T04, P05./P04, phi );   % tt
 
 % Nozzle
-T8s = applyIsentropicTempVar ( T05, P8./P05 );     % ts
+T8s = applyIsentropicTempVar_mix( T05, P8./P05, phi );     % ts
 
 f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+f_temp_mix = @(x) sp_heats_mix(x,phi);
 n_compressor = zeros(length(T02),1);
 n_turbine =    zeros(length(T02),1);
 n_nozzle =     zeros(length(T02),1);
 for i = 1:length(T02)    
     n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
-    n_turbine(i) =    integral( f_temp,T05(i),T04(i) )/integral( f_temp,T05s(i),T04(i) );
-    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp,T8s(i),T05(i) );
+    n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
+    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
 end
 
 P0ratio_combustor = P04./P03;
@@ -268,23 +271,29 @@ P0ratio_combustor = P04./P03;
 % ------------------------------------------
 % PART 1: Turbine Power Mixed vs. Project #2 
 % ------------------------------------------
-%Pout_turbine_project2 = me140_project2_Pturbine();
-%Pout_turbine_300K = me140_project2_300K();
-
+Pout_turbine_project2 = me140_project2_Pturbine();
+Pout_turbine_300K = me140_project2_300K();
 
 
 % ---------------------------------
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
 TR = 300; % [K]  
-[ h_jetA, TP ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR );
+[ hf_jetA, ~ ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR );
 
 
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
 % -----------------------------------------------------
-[hjetA_part3, TP_part3] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV, Mfuel, T03 );
-Pout_turbine_project3 = find_dh_mix( TP_part3,T05,AF./AF );
+% Find Adiabatic Flame Temp, TP = T04 (using T03)
+[~, TP] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), T03 );
+
+% Find T05s (using T04=Tp)
+T05s_new = applyIsentropicTempVar( TP, P05./P04 ); 
+
+% Find Isentropic Turbine Work: Wturbine,isentropic = -mdot*Cp*(T05s-T04);
+Pout_turbine_project3 = find_dh_mix( TP,T05s_new,phi );
+
 
 % PART 1 PLOTS
 % ------------

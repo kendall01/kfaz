@@ -1,4 +1,4 @@
-function [ T2 ] = applyIsentropicTempVar( T1, P2_by_P1)
+function [ T2 ] = applyIsentropicTempVar_mix( T1, P2_by_P1, phi)
 % DESCRIPTION: 
 % INPUTS: T1, inlet temperature
 % ------- P2_by_P1, ratio between inlet and exit pressures
@@ -9,14 +9,14 @@ error = 1E-4;
 R = 287;                        % [J/kg*K]
 
 %Function definitions for integral helpers, etc.
-f_temp = @(x) sp_heats(x)./x; % Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+f_temp = @(x) sp_heats_mix(x,phi)./x; %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
 RHS = @(a,b) integral(f_temp,a,b);
 
 %Array initializations
 T2 = zeros(1,length(T1));
 
 for i = 1:length(T1)
-    LHS = R*log(P2_by_P1);
+    LHS = R*log(P2_by_P1(i));
     T2(i) = T1(i)+.01;
     diff = RHS(T1(i),T2(i)) - LHS;
     iterations = 0;
@@ -29,4 +29,5 @@ for i = 1:length(T1)
 end
 
 end
+
 
