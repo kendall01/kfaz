@@ -288,11 +288,17 @@ TR = 300; % [K]
 % Find Adiabatic Flame Temp, TP = T04 (using T03)
 [~, TP] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), T03 );
 
-% Find T05s (using T04=Tp)
+% Find T05s (using T04 = Tp)
 T05s_new = applyIsentropicTempVar( TP, P05./P04 ); 
 
 % Find Isentropic Turbine Work: Wturbine,isentropic = -mdot*Cp*(T05s-T04);
 Pout_turbine_project3 = find_dh_mix( TP,T05s_new,phi );
+
+% ----------------------------------------
+% PART 4: ENGINE PERFORMANCE IMPROVEMENTS
+% ----------------------------------------
+% (1) EFFECT OF INCREASING LOWER HEATING VALUE (LHV)
+% Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
 
 
 % PART 1 PLOTS
