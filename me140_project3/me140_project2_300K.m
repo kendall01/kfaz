@@ -1,12 +1,10 @@
-function [ Pout_turbine ] = me140_project2_300K( ~ )
+function [ Pout_turbine ] = me140_project2_300K(~)
 % ME 140 PROJECT 3: SR30 TURBOJET ENGINE (COMBUSTION REPORT)
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
 % ASSUME: 
 % (i) lean air conditions
 
-clear all;
-close all;
 
 % UNIT CONVERSIONS
 % ----------------
@@ -137,102 +135,10 @@ ST = Fthrust./mdot_total;
 Qdot = mdot_fuel.*LHV(1);                  
 TSFC = mdot_fuel./Fthrust;
 
-% PART 2: PLOTS
-% -------------
-% Stagnation Temperature Plots
-figure(1)
-%subplot(2,2,1)
-plot(rpm,T02,'b',rpm,T03,'c',rpm,T04,'m',rpm,T05,'r',rpm,T08,'g');
-title('Part 2: Station Stagnation Temperature vs Spool Speed');
-ylabel('Stagnation Temperature [K]');
-xlabel('Spool Speed [rpm]');
-legend('T02','T03','T04','T05','T08', 'Location', 'East');
-if plotfixing; plotfixer; end
-
-% Stagnation Pressure Plots
-figure(2)
-%subplot(2,2,2)
-plot(rpm,P02./KPA_TO_PA,'b',rpm,P03./KPA_TO_PA,'c',rpm,P04./KPA_TO_PA,'m',rpm,P05./KPA_TO_PA,'r',rpm,P08./KPA_TO_PA,'g');
-title('Part 2: Station Stagnation Pressure vs Spool Speed');
-ylabel('Stagnation Pressure [kPa]'); 
-xlabel('Spool Speed [rpm]');
-legend('P02','P03','P4','P05','P08', 'Location', 'East');
-if plotfixing; plotfixer; end
-
-
-% Mach Plots
-figure(3)
-%subplot(2,2,3)
-plot(rpm,Ma2,'b',rpm,Ma3,'c',rpm,Ma4,'m',rpm,Ma5,'r',rpm,Ma8,'g');
-title('Part 2: Station Mach Number vs Spool Speed');
-ylabel('Mach number');
-xlabel('Spool Speed [rpm]');
-legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
-if plotfixing; plotfixer; end
-
-
-% Velocity Plots
-figure(4)
-%subplot(2,2,4)
-plot(rpm,U2,'b',rpm,U3,'c',rpm,U4,'m',rpm,U5,'r',rpm,U8,'g');
-title('Part 2: Station Velocity vs Spool Speed');
-ylabel('Velocity [m/s]');
-xlabel('Spool Speed [rpm]');
-legend('U02','U03','U04','U05','U08','Location', 'NorthWest');
-if plotfixing; plotfixer; end
-
-
-% Mass Flow Plots
-figure(5)
-plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,AF,'m');
-title('Part 2: Mass flow Rates vs Spool Speed');
-ylabel('Mass FLow Rate [g/s]');
-xlabel('Spool Speed [rpm]');
-legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'Location', 'NorthWest');
-if plotfixing; plotfixer; end
-
-
-% Thrust Flow Plots
-figure(6)
-plot(rpm,Fthrust,'b', rpm,Fthrust_meas,'c');
-title('Part 2: Spool Speed vs Net Thrust and Measured Thrust ');
-ylabel('Thrust [N]');
-xlabel('Spool Speed [rpm]');
-legend('Fthrust (calculated)','Fthrust (measured)', 'Location', 'NorthWest');
-if plotfixing; plotfixer; end
-
-
 % PROJECT 2 PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency
 % -------------------------------------------------------------
 Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
 eta_thermal = Wnet./Qdot;
-
-% Thrust Flow Plots
-figure(7)
-%subplot(2,2,1)
-plot(rpm,ST,'b')
-title('Part 3: Specific Thrust vs Spool Speed ');
-ylabel('Thrust [N]');
-xlabel('Spool Speed [rpm]');
-if plotfixing; plotfixer; end
-
-
-figure(8)
-%subplot(2,2,2)
-plot(rpm,TSFC,'m')
-title('Part 3: Thrust Specific Fuel Consumption vs Spool Speed');
-ylabel('Thrust [kg*N/s]');
-xlabel('Spool Speed [rpm]');
-if plotfixing; plotfixer; end
-
-
-figure(9)
-%subplot(2,2,3)
-plot(rpm,eta_thermal,'g');
-title('Part 3: Thermal Efficiency vs Spool Speed ');
-ylabel('Thermal Effeciency');
-xlabel('Spool Speed [rpm]');
-if plotfixing; plotfixer; end
 
 
 % PROJECT 2 PART 4: Spool Speed vs. Power Compressor, Power Turbine 
@@ -244,76 +150,5 @@ if plotfixing; plotfixer; end
 
 Pin_compressor = find_dh_mix( T02,T03,AFs./AF );
 Pout_turbine = find_dh_mix( T04,T05,AFs./AF );
-
-% Compressor
-T03s = applyIsentropicTempVar( T02, P03./P02 );    % tt
-
-% Turbine
-T05s = applyIsentropicTempVar( T04, P05./P04 );    % tt
-
-% Nozzle
-T8s = applyIsentropicTempVar ( T05, P8./P05 );     % ts
-
-f_temp = @(x) sp_heats_300K(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
-n_compressor = zeros(length(T02),1);
-n_turbine =    zeros(length(T02),1);
-n_nozzle =     zeros(length(T02),1);
-for i = 1:length(T02)    
-    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
-    n_turbine(i) =    integral( f_temp,T05(i),T04(i) )/integral( f_temp,T05s(i),T04(i) );
-    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp,T8s(i),T05(i) );
-end
-
-P0ratio_combustor = P04./P03;
-
-% ------------------------------------------
-% PART 1: Turbine Power Mixed vs. Project #2 
-% ------------------------------------------
-%Pout_turbine_project2 = me140_project2_Pturbine();
-
-% ---------------------------------
-% PART 2: hf & Adiabatic Flame Temp
-% ---------------------------------
-TR = 300; % [K]  
-[ h_jetA, TP ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR );
-
-
-% -----------------------------------------------------
-% PART 3: Turbine Power using Adiabatic Burned Gas Temp
-% -----------------------------------------------------
-[hjetA_part3, TP_part3] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV, Mfuel, T03 );
-Pout_turbine_part3 = find_dh_mix( TP_part3,T05,AF./AF );
-
-% Plot 
-% Power Plots
-figure(10)
-plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine), 'b');
-xlabel('Spool Speed (rpm)');
-ylabel('Power (Watts)');
-title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
-legend('Power into Compressor', 'Power Out of Turbine', 'Location', 'NorthWest');
-if plotfixing; plotfixer; end
-
-
-% Adiabatic Efficiency Plots
-figure(11)
-plot(rpm, n_compressor, 'r', rpm, n_turbine, 'b', rpm, n_nozzle, 'm');
-title('Efficiency of Compressor, Turbine, Nozzle vs Spool Speed');
-xlabel('Spool Speed (rpm)');
-ylabel('Efficiency');
-legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
-if plotfixing; plotfixer; end
-
-
-% Stagnation Pressure Ratio Across Combustor
-figure(12)
-plot(rpm, P0ratio_combustor, 'g');
-title('Stagnation Pressure Across Combustor vs Spool Speed');
-xlabel('Spool Speed (rpm)');
-ylabel('Stagnation Pressure Ratio, P04/P03');
-if plotfixing; plotfixer; end
-
-
-
 end
 

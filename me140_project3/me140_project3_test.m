@@ -114,8 +114,9 @@ phi = AFs./AF;
 % Station 4 (after combustor, before bend to turbine inlet)
 P04_guess = P4;                                         % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
 [T4,T04,Ma4,U4,k4] = findMaTemps_mix(mdot_total,A4,T4m,P04_guess,RFcross,AF);
+% T04 = 1.8*T04
+% T4 = 1.8*T4
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));       
-
 
 % Station 5 (turbine outlet)                                  
 [T5,T05,Ma5,U5,k5] = findMaTemps_mix(mdot_total,A5,T5m,P05,RFaxial,AF);
@@ -207,7 +208,7 @@ if plotfixing; plotfixer; end
 % -------------------------------------------------------------
 Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
 eta_thermal = zeros(size(Qdot));
-for i = 1:size(Qdot, 2);
+for i = size(Qdot, 2);
     eta_thermal(:,i) = Wnet./Qdot(:,i);
 end
 
@@ -232,11 +233,10 @@ if plotfixing; plotfixer; end
 
 figure(9)
 %subplot(2,2,3)
-plot(rpm,eta_thermal);
+plot(rpm,eta_thermal,'g');
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
 xlabel('Spool Speed [rpm]');
-legend('Jet-A','Dodecane');
 if plotfixing; plotfixer; end
 
 
@@ -338,14 +338,13 @@ plot(rpm, abs(Pout_turbine_project3), 'g',rpm,abs(Pout_turbine_project2),'c',rpm
 title('Turbine Power vs Spool Speed');
 xlabel('Spool Speed [rpm]');
 ylabel('Turbine Power [Watts]');
-legend('Project 3: accounted for air/fuel mixing','Project 2: Variable Cp','Project 2: Assuming constant Cp = Cp(300K)');
+legend('Project 3: accounted for air/fuel mixing','Project 2: not accounting for air/fuel mixing','Project 2: Assuming constant Cp = Cp(300K)');
 if plotfixing; plotfixer; end
 
 % PART 2 PLOTS
 % ------------
 % Adiabatic Flame Temp as a Function of Phi
-figure(14)
 plot(phi_range, TP_part2,'b');
 xlabel('Equivalence Ratio, \phi');
 ylabel('Adiabatic Flame Temperature, Tp [K]');
-title('Adiabatic Flame Temp as a Function of Phi');
+

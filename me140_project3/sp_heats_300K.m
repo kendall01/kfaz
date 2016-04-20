@@ -1,4 +1,4 @@
-function [cp,cv,gamma] = sp_heats_300K(T)
+function [cp,cv,gamma] = sp_heats_300K(~)
 % ASSUME: constant T = 300K
 % USED IN: me140_project2_300K
 
