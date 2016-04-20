@@ -279,27 +279,26 @@ Pout_turbine_300K = me140_project2_300K();
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
 TR = 300; % [K]  
-[ hf_jetA, ~ ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR , linspace(0.05, 0.65)');
-
+phi_range = linspace(0.05, 0.65)';
+[ hf_jetA, TP_part2 ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR , phi_range );
 
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
 % -----------------------------------------------------
 % Find Adiabatic Flame Temp, TP = T04 (using T03)
-[~, TP] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), T03, phi );
+[~, TP_part3] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), T03, phi );
 
 % Find T05s (using T04 = Tp)
-T05s_new = applyIsentropicTempVar( TP, P05./P04 ); 
+T05s_new = applyIsentropicTempVar( TP_part3, P05./P04 ); 
 
 % Find Isentropic Turbine Work: Wturbine,isentropic = -mdot*Cp*(T05s-T04);
-Pout_turbine_project3 = find_dh_mix( TP,T05s_new,phi );
+Pout_turbine_project3 = find_dh_mix( TP_part3,T05s_new,phi );
 
 % ----------------------------------------
 % PART 4: ENGINE PERFORMANCE IMPROVEMENTS
 % ----------------------------------------
 % (1) EFFECT OF INCREASING LOWER HEATING VALUE (LHV)
 % Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
-
 
 % PART 1 PLOTS
 % ------------
@@ -321,7 +320,6 @@ ylabel('Efficiency');
 legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
 if plotfixing; plotfixer; end
 
-
 % Stagnation Pressure Ratio Across Combustor
 figure(12)
 plot(rpm, P0ratio_combustor, 'g');
@@ -336,8 +334,13 @@ plot(rpm, abs(Pout_turbine_project3), 'g',rpm,abs(Pout_turbine_project2),'c',rpm
 title('Turbine Power vs Spool Speed');
 xlabel('Spool Speed [rpm]');
 ylabel('Turbine Power [Watts]');
-legend('Project 3: accounted for air/fuel mixing','Project 2: not accounting for air/fuel mixing','Assuming constant Cp = Cp(300K)');
+legend('Project 3: accounted for air/fuel mixing','Project 2: not accounting for air/fuel mixing','Project 2: Assuming constant Cp = Cp(300K)');
 if plotfixing; plotfixer; end
 
-
+% PART 2 PLOTS
+% ------------
+% Adiabatic Flame Temp as a Function of Phi
+plot(phi_range, TP_part2,'b');
+xlabel('Equivalence Ratio, \phi');
+ylabel('Adiabatic Flame Temperature, Tp');
 
