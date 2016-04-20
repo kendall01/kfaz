@@ -1,3 +1,4 @@
+function [ Pout_turbine ] = me140_project2_300K( ~ )
 % ME 140 PROJECT 3: SR30 TURBOJET ENGINE (COMBUSTION REPORT)
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
@@ -85,7 +86,7 @@ A8 = linspace(3.87, 3.87, length(rpm))' .* IN2_TO_M2;  % Area of nozzle exit
 % Station 2 (still need to get gamma at T2m since can't assume constant specific heat)
 P02 = linspace(Patm, Patm, length(rpm))';               % P02 = P01 [ASSUME: isentropic from 0->2]
 P2 = P02 - dP2;                                         % P2 [absolute] 
-[~,~,k2] = sp_heats(T2m);
+[~,~,k2] = sp_heats_300K(T2m);
 
 M2 = sym('m',[length(rpm),1]);
 assume(M2, 'real');
@@ -253,7 +254,7 @@ T05s = applyIsentropicTempVar( T04, P05./P04 );    % tt
 % Nozzle
 T8s = applyIsentropicTempVar ( T05, P8./P05 );     % ts
 
-f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+f_temp = @(x) sp_heats_300K(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
 n_compressor = zeros(length(T02),1);
 n_turbine =    zeros(length(T02),1);
 n_nozzle =     zeros(length(T02),1);
@@ -268,13 +269,14 @@ P0ratio_combustor = P04./P03;
 % ------------------------------------------
 % PART 1: Turbine Power Mixed vs. Project #2 
 % ------------------------------------------
-Pout_turbine_project2 = me140_project2_Pturbine(~);
+%Pout_turbine_project2 = me140_project2_Pturbine();
 
 % ---------------------------------
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
-TR = 300; % [K]
+TR = 300; % [K]  
 [ h_jetA, TP ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR );
+
 
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
@@ -311,4 +313,7 @@ xlabel('Spool Speed (rpm)');
 ylabel('Stagnation Pressure Ratio, P04/P03');
 if plotfixing; plotfixer; end
 
+
+
+end
 
