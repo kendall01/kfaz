@@ -148,7 +148,7 @@ eta_thermal = Wnet./Qdot;
 % TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
 % NOZZLE (5->8): total-to-static
 
-Pin_compressor = find_dh_mix( T02,T03,AFs./AF );
-Pout_turbine = find_dh_mix( T04,T05,AFs./AF );
+%Pin_compressor = find_dh( T02,T03 ) .* mdot_air;
+Pout_turbine = sp_heats(300) .* (T05-T04) .* mdot_total;
 end
 
