@@ -18,11 +18,11 @@ T2 = zeros(1,length(T1));
 for i = 1:length(T1)
     LHS = R*log(P2_by_P1);
     T2(i) = T1(i)+.01;
-    diff = RHS(T1(i),T2(i)) - LHS;
+    diff = RHS(T1(i),T2(i)) - LHS(i);
     iterations = 0;
     while(abs(diff) > error)
         T2(i) = T2(i) - diff./1E1;
-        diff = RHS(T1(i),T2(i)) - LHS;
+        diff = RHS(T1(i),T2(i)) - LHS(i);
         iterations = iterations + 1;
     end
     %iterations
