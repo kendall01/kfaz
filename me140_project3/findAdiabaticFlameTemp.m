@@ -1,4 +1,4 @@
-function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h2o, h_n2, h_o2, LHV, Mfuel, TR )
+function [ hf_jetA, T2f ] = findAdiabaticFlameTemp( h_co2, h_h2o, h_n2, h_o2, LHV, Mfuel, TR )
 % INPUTS:
 % --------
 % h_co2 and h_h2o (from Tables in units of KJ/mol)
@@ -26,7 +26,7 @@ G_to_KG = .001;
 % ---------------------------------------------------------
 phi = 1;
 dh_jetA = 0; %assumption
-Q = (LHV*G_to_KG)*Mfuel;
+Q = (LHV(1)*G_to_KG)*Mfuel;
 hf_jetA = -dh_jetA + 12.3*h_co2 + 11.1*h_h2o + Q; % enthaply of formation, jetA
 
 % Find Adiabatic Flame Temperature (ASSUME: phi = linspace, Q = 0, LEC 5,SLIDE 8)
@@ -54,8 +54,6 @@ sum = N * hf'; %intentional matrix multiplication multiplies and sums as desired
 LHS = phi*hf_jetA + dh_jetA - sum;
 T2f = zeros(length(phi),1);
 for p = 1:length(phi)
-
-
     % Initializations
     T1 = T0;
     T2 = T1 + .01;
@@ -73,7 +71,6 @@ for p = 1:length(phi)
     end
     iterations
     T2f(p) = T2;
-    % end
 end
     
 end
