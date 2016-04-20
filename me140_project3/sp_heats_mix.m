@@ -37,10 +37,10 @@ for i = 1: size(N,2) %number of columns in N
 end
 
 P = zeros(4,4);
-P(s.CO2,:) = [a(1) b(1) c(1) d(1)];
-P(s.H2O,:) = [a(2) b(2) c(2) d(2)];
-P(s.N2,:) = [a(3) b(3) c(3) d(3)];
-P(s.O2,:) = [a(4) b(4) c(4) d(4)];
+P(s.CO2,:) = [d(1) c(1) b(1) a(1)];
+P(s.H2O,:) = [d(2) c(2) b(2) a(2)];
+P(s.N2,:) = [d(3) c(3) b(3) a(3)];
+P(s.O2,:) = [d(4) c(4) b(4) a(4)];
 
 cp_m = zeros(size(T));
 cv_m = zeros(size(T));
