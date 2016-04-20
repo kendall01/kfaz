@@ -16,17 +16,17 @@ function [ h_jetA, Tp ] = findAdiabaticFlameTemp( h_co2, h_h2o, h_n2, h_o2, LHV,
 
 CELSIUS_TO_KELVIN = 273.15;
 T0 = 25 + CELSIUS_TO_KELVIN;    % Reference Temperature, [K] 
-error = 1E-4;
+error = 1E2;
 diff = 0.01;
-speedFactor = 10;
+speedFactor = 5E2;
 N_to_O = 79/21;                 % Engineering Air Molar Mass Ratio of Nitrogen to Oxygen
-
+G_to_KG = .001;
 
 % Find Formation Enthalpy (ASSUME: phi = 1, LEC 5,SLIDE 24) 
 % ---------------------------------------------------------
 phi = 1;
 dh_jetA = 0; %assumption
-Q = LHV*Mfuel;
+Q = (LHV*G_to_KG)*Mfuel;
 hf_jetA = -dh_jetA + 12.3*h_co2 + 11.1*h_h2o + Q; % enthaply of formation, jetA
 
 % Find Adiabatic Flame Temperature (ASSUME: phi = linspace, Q = 0, LEC 5,SLIDE 8)
@@ -51,8 +51,8 @@ sum = N * hf'; %intentional matrix multiplication multiplies and sums as desired
 % Solve for Tp (ASSUME: Q = 0, adiabatic)
 % LHS: hf_jetA + dh_jetA - sum( N(i)*hf(i) )
 % RHS: integral[ sum( Cp(i)(T')dT') ] from T0 to Tp + Q
-LHS = hf_jetA + dh_jetA - sum;
-
+LHS = phi*hf_jetA + dh_jetA - sum;
+T2f = zeros(length(phi),1);
 for p = 1:length(phi)
 
 
@@ -61,21 +61,18 @@ for p = 1:length(phi)
     T2 = T1 + .01;
     
     RHS = find_dh_mix(T1,T2,phi(p));
-    diff = RHS - LHS; %not correct, needs n_dot
+    diff = RHS - LHS(p); %not correct, needs n_dot
     iterations = 0;
     
-    % ----------------------------------------------------------------
-    % TODO: ADD FOR LOOP?, NEEDS TO GO THROUGH MULTIPLE TEMPERATURES!!
-    % -----------------------------------------------------------------
-    % ( modeled after applyIsentropicTempVar from Project #1 )
-    % for
+    % modeled after applyIsentropicTempVar from Project #1
     while(abs(diff) > error)
         T2 = T2 - diff./speedFactor;
-        RHS = -1*find_dh_mix(T1,T2,phi(p));
-        diff = RHS - LHS;
+        RHS = find_dh_mix(T1,T2,phi(p));
+        diff = RHS - LHS(p);
         iterations = iterations + 1;
     end
     iterations
+    T2f(p) = T2;
     % end
 end
     
