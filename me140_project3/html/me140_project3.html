@@ -1,0 +1,775 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>me140_project3</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-04-20"><meta name="DC.source" content="me140_project3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% ME 140 PROJECT 3: SR30 TURBOJET ENGINE (COMBUSTION REPORT)</span>
+<span class="comment">% FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE</span>
+<span class="comment">% -------------------------------------------------------------</span>
+<span class="comment">% ASSUME:</span>
+<span class="comment">% (i) lean air conditions</span>
+
+clear <span class="string">all</span>;
+close <span class="string">all</span>;
+
+<span class="comment">% UNIT CONVERSIONS</span>
+<span class="comment">% ----------------</span>
+C_TO_K = 273.15;
+LBF_TO_N = 4.44822;
+IN2_TO_M2 = 6.4516*10^-4;
+KPA_TO_PA = 10^3;
+KG_TO_G = 10^3;
+KJ_TO_J = 10^3;
+R = 287.058;                                            <span class="comment">% J/(kg*K)</span>
+plotfixing = 1;       <span class="comment">% Boolean for whether or not to run plot fixer</span>
+
+<span class="comment">% DATA:</span>
+<span class="comment">% ------</span>
+rpm = me140_project2_data(1)';
+mdot_fuel = me140_project2_data(13)';                   <span class="comment">% mdot_fuel,[kg/s]</span>
+Fthrust_meas = me140_project2_data(14)' .* LBF_TO_N;    <span class="comment">% Fthrust, [N]</span>
+Toil = me140_project2_data(7)' + C_TO_K;
+
+<span class="comment">% Measured Temperatures</span>
+T2m = me140_project2_data(2)' + C_TO_K;                 <span class="comment">% T2m, cross-flow</span>
+T3m = me140_project2_data(3)' + C_TO_K;                 <span class="comment">% T3m, cross-flow</span>
+T4m = me140_project2_data(4)' + C_TO_K;                 <span class="comment">% T4m, cross-flow</span>
+T5m = me140_project2_data(5)' + C_TO_K;                 <span class="comment">% T5m, axial-flow</span>
+T8m = me140_project2_data(6)' + C_TO_K;                 <span class="comment">% T8m, cross-flow</span>
+
+<span class="comment">% Measured Pressures</span>
+Patm = 101300;
+dP2 = me140_project2_data(8)'  .* KPA_TO_PA;            <span class="comment">% dP2 = Pstag - Pstatic</span>
+P03 = me140_project2_data(9)'  .* KPA_TO_PA + Patm ;    <span class="comment">% P03 [absolute] [Pa]</span>
+P4 =  me140_project2_data(10)' .* KPA_TO_PA + Patm;    <span class="comment">% P4 (static) [absolute]</span>
+P05 = me140_project2_data(11)' .* KPA_TO_PA + Patm;    <span class="comment">% P05 [absolute]</span>
+P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    <span class="comment">% P08 [absolute]</span>
+
+<span class="comment">% GIVEN:</span>
+<span class="comment">% ------</span>
+RFcross = linspace(.68, .68, length(rpm))';            <span class="comment">% Reference Factor cross-section</span>
+RFaxial = linspace(.86, .86, length(rpm))';            <span class="comment">% Reference Factor axial</span>
+hf_co2 =  -393.509 * KJ_TO_J;                          <span class="comment">% [J/mol]</span>
+hf_h2o =  -241.818 * KJ_TO_J;
+hf_n2  = 0         * KJ_TO_J;
+hf_o2  = 0         * KJ_TO_J;
+
+<span class="comment">% Jet A (Kerosene) vs. Dodecane (C12H26)</span>
+HC_ratio = [1.8 2.17];
+Mfuel = [170 170];
+latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J ];        <span class="comment">% latent heat of vaporization</span>
+LHV = [42800*KJ_TO_J, 44560*KJ_TO_J, 42900*KJ_TO_J ];   <span class="comment">% vapor, J/kg Jet-A, Dodecane, TS-1 (source:Aviation Tech Review)</span>
+hf0 = [0 -1712];                                        <span class="comment">% vapor, enthalpy of formation J/kg (replace 0 later)</span>
+AFs = 14.43;                                            <span class="comment">% stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)</span>
+
+
+<span class="comment">% Areas [m^2]</span>
+A1 = linspace(27.3, 27.3, length(rpm))' .* IN2_TO_M2;  <span class="comment">% Flow area at inlet of bellmouth</span>
+A2 = linspace(6.4, 6.4, length(rpm))'   .* IN2_TO_M2;  <span class="comment">% Effective flow area at pitot-static probe</span>
+A3 = linspace(9.0, 9.0, length(rpm))'   .* IN2_TO_M2;  <span class="comment">% Area of compressor exit</span>
+A4 = linspace(7.2, 7.2, length(rpm))'   .* IN2_TO_M2;  <span class="comment">% Area before bend to turbine inlet</span>
+A5 = linspace(4.7, 4.7, length(rpm))'   .* IN2_TO_M2;  <span class="comment">% Area of turbine outlet</span>
+A8 = linspace(3.87, 3.87, length(rpm))' .* IN2_TO_M2;  <span class="comment">% Area of nozzle exit</span>
+
+<span class="comment">% CALCULATIONS:</span>
+<span class="comment">% -------------</span>
+<span class="comment">% -------------------------------------------------------------</span>
+<span class="comment">% PART 1: Redo Project 2 with REAL products after the combustor</span>
+<span class="comment">% --------------------------------------------------------------</span>
+<span class="comment">% Assume: complete combustion of Jet A</span>
+
+
+<span class="comment">% PROJECT 2, PART 2: Spool Speed vs. T0,P0,Ma,U,mdot</span>
+<span class="comment">% --------------------------------------------------</span>
+<span class="comment">% NOTE:</span>
+<span class="comment">% (i) UNITS: all pressures in KPa, temperatures in C, areas in in^2</span>
+<span class="comment">% (ii) subscript m = measured temp before Recovery factor adjsutment</span>
+<span class="comment">% (ii) no subscript = actual stagnation</span>
+<span class="comment">% (ii) subscript 0 = actual stagnaton</span>
+
+<span class="comment">% Station 2 (still need to get gamma at T2m since can't assume constant specific heat)</span>
+P02 = linspace(Patm, Patm, length(rpm))';               <span class="comment">% P02 = P01 [ASSUME: isentropic from 0-&gt;2]</span>
+P2 = P02 - dP2;                                         <span class="comment">% P2 [absolute]</span>
+[~,~,k2] = sp_heats(T2m);
+
+M2 = sym(<span class="string">'m'</span>,[length(rpm),1]);
+assume(M2, <span class="string">'real'</span>);
+assumeAlso(M2 &gt; 0); <span class="comment">%Select the subsonic solution. Set M &gt; 1 if want supersonic solution.</span>
+Ma2 = vpasolve(P02./P2 ==(1+ M2.^2.*((k2-1)./2)).^(k2./(k2-1)), M2); <span class="comment">% Solve for Ma2 [ASSUME: isentropic from 0-&gt;2]</span>
+Ma2 = struct(Ma2);
+Ma2 = struct2array(Ma2)'; <span class="comment">%Ma is returned as a symbolic variable which doesn't work in polyval in sp_heats</span>
+Ma2 = abs(Ma2);           <span class="comment">%This seems kind of sketchy, but looking at the results seems reasonable. Tested positive solution and it is valid, given M2 is squared in all terms.</span>
+Ma2 = double(Ma2);
+T2  = recoveryFactor(T2m,Ma2,RFcross);
+T02 = T2.*(1 + (Ma2.^2).*((k2-1)./2));
+U2 = Ma2.*sqrt(k2.*R.*T2);
+MFP2 = findMFP(Ma2,k2);
+
+<span class="comment">% Mass Flow of Air and Fuel &amp; Air/Fuel Ratio Plots</span>
+mdot_air = ( MFP2.*A2.*P02 )./sqrt(R.*T02);                 <span class="comment">% USE: MFP = (mdot/A)*(sqrt(R*T0)/P0)</span>
+mdot_total = mdot_air + mdot_fuel;
+AF = mdot_air ./ mdot_fuel;                                 <span class="comment">% air fuel ratio</span>
+phi = AFs./AF;
+
+<span class="comment">% Station 3 (compressor exit)</span>
+[T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
+
+<span class="comment">% CODE CHANGES FROM PROJECT # 2 HERE</span>
+<span class="comment">% ------------------------------------</span>
+<span class="comment">% Station 4 (after combustor, before bend to turbine inlet)</span>
+P04_guess = P4;                                         <span class="comment">% P04 = P4 [ASSUME: Ma~&lt;0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23</span>
+[T4,T04,Ma4,U4,k4] = findMaTemps_mix(mdot_total,A4,T4m,P04_guess,RFcross,AF);
+P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));
+
+<span class="comment">% Station 5 (turbine outlet)</span>
+[T5,T05,Ma5,U5,k5] = findMaTemps_mix(mdot_total,A5,T5m,P05,RFaxial,AF);
+
+<span class="comment">% Station 8 (nozzle exit)</span>
+[T8,T08,Ma8,U8,k8] = findMaTemps_mix(mdot_total,A8,T8m,P08,RFcross,AF);
+P8 = P08./(1+ Ma8.^2.*((k8-1)./2)).^(k8./(k8-1));
+
+<span class="comment">% Station 1 (can't be found first)</span>
+T01 = T02;                                              <span class="comment">% [ASSUME: Isentropic from 0--&gt;2, therefore also isentropic 1--&gt;2]</span>
+P01 = P02;                                              <span class="comment">% [ASSUME: small pressure change in combustor.]</span>
+
+<span class="comment">% Find Net Thrust</span>
+<span class="comment">% INLET: state 1 (beg. of nozzle), OUTLET: state 8 (outlet of nozzle)</span>
+U1 = findU(T01,P01,mdot_air,A1);
+u_in = U1;
+u_out = U8;
+Fthrust = (mdot_total .* u_out) - (mdot_air .* u_in);
+ST = Fthrust./mdot_total;
+Qdot = mdot_fuel*LHV(1:2);
+TSFC = mdot_fuel./Fthrust;
+
+<span class="comment">% PART 2: PLOTS</span>
+<span class="comment">% -------------</span>
+<span class="comment">% Stagnation Temperature Plots</span>
+figure(1)
+<span class="comment">%subplot(2,2,1)</span>
+plot(rpm./1000,T02,<span class="string">'b'</span>,rpm./1000,T03,<span class="string">'c'</span>,rpm./1000,T04,<span class="string">'m'</span>,rpm./1000,T05,<span class="string">'r'</span>,rpm./1000,T08,<span class="string">'g'</span>);
+title(<span class="string">'Part 2: Station Stagnation Temperature vs Spool Speed'</span>);
+ylabel(<span class="string">'Stagnation Temperature [K]'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+legend(<span class="string">'T02'</span>,<span class="string">'T03'</span>,<span class="string">'T04'</span>,<span class="string">'T05'</span>,<span class="string">'T08'</span>, <span class="string">'Location'</span>, <span class="string">'East'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+<span class="comment">% Stagnation Pressure Plots</span>
+figure(2)
+<span class="comment">%subplot(2,2,2)</span>
+plot(rpm./1000,P02./KPA_TO_PA,<span class="string">'b'</span>,rpm./1000,P03./KPA_TO_PA,<span class="string">'c'</span>,rpm./1000,P04./KPA_TO_PA,<span class="string">'m'</span>,rpm./1000,P05./KPA_TO_PA,<span class="string">'r'</span>,rpm./1000,P08./KPA_TO_PA,<span class="string">'g'</span>);
+title(<span class="string">'Part 2: Station Stagnation Pressure vs Spool Speed'</span>);
+ylabel(<span class="string">'Stagnation Pressure [kPa]'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+legend(<span class="string">'P02'</span>,<span class="string">'P03'</span>,<span class="string">'P4'</span>,<span class="string">'P05'</span>,<span class="string">'P08'</span>, <span class="string">'Location'</span>, <span class="string">'East'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+
+<span class="comment">% Mach Plots</span>
+figure(3)
+<span class="comment">%subplot(2,2,3)</span>
+plot(rpm./1000,Ma2,<span class="string">'b'</span>,rpm./1000,Ma3,<span class="string">'c'</span>,rpm./1000,Ma4,<span class="string">'m'</span>,rpm./1000,Ma5,<span class="string">'r'</span>,rpm./1000,Ma8,<span class="string">'g'</span>);
+title(<span class="string">'Part 2: Station Mach Number vs Spool Speed'</span>);
+ylabel(<span class="string">'Mach number'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+legend(<span class="string">'Ma2'</span>,<span class="string">'Ma3'</span>,<span class="string">'Ma4'</span>,<span class="string">'Ma5'</span>,<span class="string">'Ma8'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+
+<span class="comment">% Velocity Plots</span>
+figure(4)
+<span class="comment">%subplot(2,2,4)</span>
+plot(rpm./1000,U2,<span class="string">'b'</span>,rpm./1000,U3,<span class="string">'c'</span>,rpm./1000,U4,<span class="string">'m'</span>,rpm./1000,U5,<span class="string">'r'</span>,rpm./1000,U8,<span class="string">'g'</span>);
+title(<span class="string">'Part 2: Station Velocity vs Spool Speed'</span>);
+ylabel(<span class="string">'Velocity [m/s]'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+legend(<span class="string">'U02'</span>,<span class="string">'U03'</span>,<span class="string">'U04'</span>,<span class="string">'U05'</span>,<span class="string">'U08'</span>,<span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+
+<span class="comment">% Mass Flow Plots</span>
+figure(5)
+plot(rpm./1000,mdot_air.*KG_TO_G,<span class="string">'b'</span>, rpm./1000,mdot_fuel.*KG_TO_G,<span class="string">'c'</span>,rpm./1000,AF,<span class="string">'m'</span>);
+title(<span class="string">'Part 2: Mass flow Rates vs Spool Speed'</span>);
+ylabel(<span class="string">'Mass FLow Rate [g/s]'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+legend(<span class="string">'Mass Flow Air'</span>,<span class="string">'Mass Flow Fuel'</span>,<span class="string">'Air-Fuel Ratio'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+
+<span class="comment">% Thrust Flow Plots</span>
+figure(6)
+plot(rpm./1000,Fthrust,<span class="string">'b'</span>, rpm./1000,Fthrust_meas,<span class="string">'c'</span>);
+title(<span class="string">'Part 2: Spool Speed vs Net Thrust and Measured Thrust '</span>);
+ylabel(<span class="string">'Thrust [N]'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+legend(<span class="string">'Fthrust (calculated)'</span>,<span class="string">'Fthrust (measured)'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+
+<span class="comment">% PROJECT 2 PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency</span>
+<span class="comment">% -------------------------------------------------------------</span>
+Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
+eta_thermal = zeros(size(Qdot));
+<span class="keyword">for</span> i = 1:size(Qdot, 2);
+    eta_thermal(:,i) = Wnet./Qdot(:,i);
+<span class="keyword">end</span>
+
+<span class="comment">% Thrust Flow Plots</span>
+figure(7)
+<span class="comment">%subplot(2,2,1)</span>
+plot(rpm./1000,ST,<span class="string">'b'</span>)
+title(<span class="string">'Part 3: Specific Thrust vs Spool Speed '</span>);
+ylabel(<span class="string">'Thrust [N]'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+
+figure(8)
+<span class="comment">%subplot(2,2,2)</span>
+plot(rpm./1000,TSFC.*1000,<span class="string">'m'</span>)
+title(<span class="string">'Part 3: Thrust Specific Fuel Consumption vs Spool Speed'</span>);
+ylabel(<span class="string">'Thrust [g*N/s]'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+
+figure(9)
+<span class="comment">%subplot(2,2,3)</span>
+plot(rpm./1000,eta_thermal);
+title(<span class="string">'Part 3: Thermal Efficiency vs Spool Speed '</span>);
+ylabel(<span class="string">'Thermal Effeciency'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+legend(<span class="string">'Jet-A'</span>,<span class="string">'Dodecane'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+
+<span class="comment">% PROJECT 2 PART 4: Spool Speed vs. Power Compressor, Power Turbine</span>
+<span class="comment">% --------------------------------------------------------</span>
+<span class="comment">% Adiabatic Efficiencies</span>
+<span class="comment">% COMPRESSOR (2-&gt;3): total-to-total, Win,isentropic / Win,actual</span>
+<span class="comment">% COMBUSTOR (3-&gt;4)</span>
+<span class="comment">% TURBINE (4-&gt;5): total-to-total, assume exhaust KE is not a loss, aeropropulsive</span>
+<span class="comment">% NOZZLE (5-&gt;8): total-to-static</span>
+
+Pin_compressor = find_dh_mix( T02,T03,phi );
+Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
+
+<span class="comment">% Compressor Outlet</span>
+T03s = applyIsentropicTempVar( T02, P03./P02 );       <span class="comment">% tt</span>
+
+<span class="comment">% Turbine</span>
+T05s = applyIsentropicTempVar_mix( T04, P05./P04, phi );   <span class="comment">% tt</span>
+
+<span class="comment">% Nozzle</span>
+T8s = applyIsentropicTempVar_mix( T05, P8./P05, phi );     <span class="comment">% ts</span>
+
+f_temp = @(x) sp_heats(x); <span class="comment">%Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double</span>
+f_temp_mix = @(x) sp_heats_mix(x,phi);
+n_compressor = zeros(length(T02),1);
+n_turbine =    zeros(length(T02),1);
+n_nozzle =     zeros(length(T02),1);
+<span class="keyword">for</span> i = 1:length(T02)
+    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
+    n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
+    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
+<span class="keyword">end</span>
+
+P0ratio_combustor = P04./P03;
+
+<span class="comment">% ------------------------------------------</span>
+<span class="comment">% PART 1: Turbine Power Mixed vs. Project #2</span>
+<span class="comment">% ------------------------------------------</span>
+Pout_turbine_project2 = me140_project2_Pturbine();
+Pout_turbine_300K = me140_project2_300K();
+
+<span class="comment">% ---------------------------------</span>
+<span class="comment">% PART 2: hf &amp; Adiabatic Flame Temp</span>
+<span class="comment">% ---------------------------------</span>
+TR = 300; <span class="comment">% [K]</span>
+phi_range = linspace(0.05, 0.65)';
+[ hf_jetA, TP_part2 ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1:2), Mfuel(1), TR , phi_range );
+
+<span class="comment">% -----------------------------------------------------</span>
+<span class="comment">% PART 3: Turbine Power using Adiabatic Burned Gas Temp</span>
+<span class="comment">% -----------------------------------------------------</span>
+<span class="comment">% Find Adiabatic Flame Temp, TP = T04 (using T03)</span>
+[~, TP_part3] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1:2), Mfuel(1), T03, phi );
+
+<span class="comment">% Find T05s (using T04 = Tp)</span>
+T05s_new = applyIsentropicTempVar( TP_part3, P05./P04 );
+
+<span class="comment">% Find Isentropic Turbine Work: Wturbine,isentropic = -mdot*Cp*(T05s-T04);</span>
+Pout_turbine_project3 = find_dh_mix( TP_part3,T05s_new,phi );
+
+<span class="comment">% ----------------------------------------</span>
+<span class="comment">% PART 4: ENGINE PERFORMANCE IMPROVEMENTS</span>
+<span class="comment">% ----------------------------------------</span>
+<span class="comment">% (1) EFFECT OF INCREASING LOWER HEATING VALUE (LHV)</span>
+<span class="comment">% Pout_turbine_project3 = find_dh_mix( T04,T05,phi );</span>
+
+<span class="comment">% PART 1 PLOTS</span>
+<span class="comment">% ------------</span>
+<span class="comment">% Power Plots</span>
+figure(10)
+plot(rpm ./1000, Pin_compressor./1000, <span class="string">'r'</span>, rpm./1000, abs(Pout_turbine_project3)./1000, <span class="string">'b'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+ylabel(<span class="string">'Power [kW]'</span>);
+title(<span class="string">'Power into Compressor and Power Out of Turbine vs. Spool Spped'</span>);
+legend(<span class="string">'Power into Compressor'</span>, <span class="string">'Power Out of Turbine'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+<span class="comment">% Adiabatic Efficiency Plots</span>
+figure(11)
+plot(rpm./1000, n_compressor, <span class="string">'r'</span>, rpm./1000, n_turbine, <span class="string">'b'</span>, rpm./1000, n_nozzle, <span class="string">'m'</span>);
+title(<span class="string">'Efficiency of Compressor, Turbine, Nozzle vs Spool Speed'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+ylabel(<span class="string">'Efficiency'</span>);
+legend(<span class="string">'Compressor Efficiency'</span>, <span class="string">'Turbine Efficiency'</span>, <span class="string">'Nozzle Efficiency'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+<span class="comment">% Stagnation Pressure Ratio Across Combustor</span>
+figure(12)
+plot(rpm./1000, P0ratio_combustor, <span class="string">'g'</span>);
+title(<span class="string">'Stagnation Pressure Across Combustor vs Spool Speed'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+ylabel(<span class="string">'Stagnation Pressure Ratio, P04/P03'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+<span class="comment">% Turbine Power, 3 Ways</span>
+figure(13)
+plot(rpm./1000, abs(Pout_turbine_project3)./1000, <span class="string">'g'</span>,rpm./1000,abs(Pout_turbine_project2)./1000,<span class="string">'c'</span>,rpm./1000,abs(Pout_turbine_300K)./1000,<span class="string">'m'</span>);
+title(<span class="string">'Turbine Power vs Spool Speed'</span>);
+xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
+ylabel(<span class="string">'Turbine Power [kW]'</span>);
+legend(<span class="string">'Project 3: accounted for air/fuel mixing'</span>,<span class="string">'Project 2: Variable Cp'</span>,<span class="string">'Project 2: Assuming constant Cp = Cp(300K)'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+
+<span class="comment">% PART 2 PLOTS</span>
+<span class="comment">% ------------</span>
+<span class="comment">% Adiabatic Flame Temp as a Function of Phi</span>
+figure(14)
+plot(phi_range, TP_part2,<span class="string">'b'</span>);
+xlabel(<span class="string">'Equivalence Ratio, \phi'</span>);
+ylabel(<span class="string">'Adiabatic Flame Temperature, Tp [K]'</span>);
+title(<span class="string">'Adiabatic Flame Temp as a Function of Phi'</span>);
+<span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="me140_project3_01.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_02.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_03.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_04.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_05.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_06.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_07.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_08.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_09.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_10.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_11.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_12.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_13.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_14.png" style="width:560px;height:420px;" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% ME 140 PROJECT 3: SR30 TURBOJET ENGINE (COMBUSTION REPORT)
+% FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% ASSUME: 
+% (i) lean air conditions
+
+clear all;
+close all;
+
+% UNIT CONVERSIONS
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+C_TO_K = 273.15;
+LBF_TO_N = 4.44822;
+IN2_TO_M2 = 6.4516*10^-4;
+KPA_TO_PA = 10^3;
+KG_TO_G = 10^3;
+KJ_TO_J = 10^3;
+R = 287.058;                                            % J/(kg*K)
+plotfixing = 1;       % Boolean for whether or not to run plot fixer
+
+% DATA:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+rpm = me140_project2_data(1)';
+mdot_fuel = me140_project2_data(13)';                   % mdot_fuel,[kg/s]
+Fthrust_meas = me140_project2_data(14)' .* LBF_TO_N;    % Fthrust, [N]
+Toil = me140_project2_data(7)' + C_TO_K; 
+
+% Measured Temperatures
+T2m = me140_project2_data(2)' + C_TO_K;                 % T2m, cross-flow
+T3m = me140_project2_data(3)' + C_TO_K;                 % T3m, cross-flow 
+T4m = me140_project2_data(4)' + C_TO_K;                 % T4m, cross-flow
+T5m = me140_project2_data(5)' + C_TO_K;                 % T5m, axial-flow
+T8m = me140_project2_data(6)' + C_TO_K;                 % T8m, cross-flow
+
+% Measured Pressures
+Patm = 101300;  
+dP2 = me140_project2_data(8)'  .* KPA_TO_PA;            % dP2 = Pstag - Pstatic 
+P03 = me140_project2_data(9)'  .* KPA_TO_PA + Patm ;    % P03 [absolute] [Pa]
+P4 =  me140_project2_data(10)' .* KPA_TO_PA + Patm;    % P4 (static) [absolute] 
+P05 = me140_project2_data(11)' .* KPA_TO_PA + Patm;    % P05 [absolute]   
+P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    % P08 [absolute]   
+
+% GIVEN:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+RFcross = linspace(.68, .68, length(rpm))';            % Reference Factor cross-section
+RFaxial = linspace(.86, .86, length(rpm))';            % Reference Factor axial
+hf_co2 =  -393.509 * KJ_TO_J;                          % [J/mol]
+hf_h2o =  -241.818 * KJ_TO_J;
+hf_n2  = 0         * KJ_TO_J;
+hf_o2  = 0         * KJ_TO_J;
+
+% Jet A (Kerosene) vs. Dodecane (C12H26)
+HC_ratio = [1.8 2.17];
+Mfuel = [170 170];
+latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J ];        % latent heat of vaporization
+LHV = [42800*KJ_TO_J, 44560*KJ_TO_J, 42900*KJ_TO_J ];   % vapor, J/kg Jet-A, Dodecane, TS-1 (source:Aviation Tech Review)
+hf0 = [0 -1712];                                        % vapor, enthalpy of formation J/kg (replace 0 later)
+AFs = 14.43;                                            % stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)
+
+
+% Areas [m^2]
+A1 = linspace(27.3, 27.3, length(rpm))' .* IN2_TO_M2;  % Flow area at inlet of bellmouth
+A2 = linspace(6.4, 6.4, length(rpm))'   .* IN2_TO_M2;  % Effective flow area at pitot-static probe
+A3 = linspace(9.0, 9.0, length(rpm))'   .* IN2_TO_M2;  % Area of compressor exit
+A4 = linspace(7.2, 7.2, length(rpm))'   .* IN2_TO_M2;  % Area before bend to turbine inlet
+A5 = linspace(4.7, 4.7, length(rpm))'   .* IN2_TO_M2;  % Area of turbine outlet
+A8 = linspace(3.87, 3.87, length(rpm))' .* IN2_TO_M2;  % Area of nozzle exit
+
+% CALCULATIONS:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% PART 1: Redo Project 2 with REAL products after the combustor
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% Assume: complete combustion of Jet A
+
+
+% PROJECT 2, PART 2: Spool Speed vs. T0,P0,Ma,U,mdot
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% NOTE:
+% (i) UNITS: all pressures in KPa, temperatures in C, areas in in^2
+% (ii) subscript m = measured temp before Recovery factor adjsutment
+% (ii) no subscript = actual stagnation 
+% (ii) subscript 0 = actual stagnaton 
+
+% Station 2 (still need to get gamma at T2m since can't assume constant specific heat)
+P02 = linspace(Patm, Patm, length(rpm))';               % P02 = P01 [ASSUME: isentropic from 0->2]
+P2 = P02 - dP2;                                         % P2 [absolute] 
+[~,~,k2] = sp_heats(T2m);
+
+M2 = sym('m',[length(rpm),1]);
+assume(M2, 'real');
+assumeAlso(M2 > 0); %Select the subsonic solution. Set M > 1 if want supersonic solution.
+Ma2 = vpasolve(P02./P2 ==(1+ M2.^2.*((k2-1)./2)).^(k2./(k2-1)), M2); % Solve for Ma2 [ASSUME: isentropic from 0->2]
+Ma2 = struct(Ma2);
+Ma2 = struct2array(Ma2)'; %Ma is returned as a symbolic variable which doesn't work in polyval in sp_heats
+Ma2 = abs(Ma2);           %This seems kind of sketchy, but looking at the results seems reasonable. Tested positive solution and it is valid, given M2 is squared in all terms.
+Ma2 = double(Ma2);
+T2  = recoveryFactor(T2m,Ma2,RFcross);
+T02 = T2.*(1 + (Ma2.^2).*((k2-1)./2));
+U2 = Ma2.*sqrt(k2.*R.*T2);
+MFP2 = findMFP(Ma2,k2);
+             
+% Mass Flow of Air and Fuel & Air/Fuel Ratio Plots
+mdot_air = ( MFP2.*A2.*P02 )./sqrt(R.*T02);                 % USE: MFP = (mdot/A)*(sqrt(R*T0)/P0)
+mdot_total = mdot_air + mdot_fuel;
+AF = mdot_air ./ mdot_fuel;                                 % air fuel ratio
+phi = AFs./AF;
+
+% Station 3 (compressor exit)
+[T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
+
+% CODE CHANGES FROM PROJECT # 2 HERE
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% Station 4 (after combustor, before bend to turbine inlet)
+P04_guess = P4;                                         % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
+[T4,T04,Ma4,U4,k4] = findMaTemps_mix(mdot_total,A4,T4m,P04_guess,RFcross,AF);
+P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));       
+
+% Station 5 (turbine outlet)                                  
+[T5,T05,Ma5,U5,k5] = findMaTemps_mix(mdot_total,A5,T5m,P05,RFaxial,AF);
+
+% Station 8 (nozzle exit)            
+[T8,T08,Ma8,U8,k8] = findMaTemps_mix(mdot_total,A8,T8m,P08,RFcross,AF);
+P8 = P08./(1+ Ma8.^2.*((k8-1)./2)).^(k8./(k8-1));       
+
+% Station 1 (can't be found first)
+T01 = T02;                                              % [ASSUME: Isentropic from 0REPLACE_WITH_DASH_DASH>2, therefore also isentropic 1REPLACE_WITH_DASH_DASH>2]
+P01 = P02;                                              % [ASSUME: small pressure change in combustor.]
+
+% Find Net Thrust
+% INLET: state 1 (beg. of nozzle), OUTLET: state 8 (outlet of nozzle)
+U1 = findU(T01,P01,mdot_air,A1);
+u_in = U1;
+u_out = U8;
+Fthrust = (mdot_total .* u_out) - (mdot_air .* u_in);
+ST = Fthrust./mdot_total;
+Qdot = mdot_fuel*LHV(1:2);                  
+TSFC = mdot_fuel./Fthrust;
+
+% PART 2: PLOTS
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% Stagnation Temperature Plots
+figure(1)
+%subplot(2,2,1)
+plot(rpm./1000,T02,'b',rpm./1000,T03,'c',rpm./1000,T04,'m',rpm./1000,T05,'r',rpm./1000,T08,'g');
+title('Part 2: Station Stagnation Temperature vs Spool Speed');
+ylabel('Stagnation Temperature [K]');
+xlabel('Spool Speed [rpm x1000]');
+legend('T02','T03','T04','T05','T08', 'Location', 'East');
+if plotfixing; plotfixer; end
+
+% Stagnation Pressure Plots
+figure(2)
+%subplot(2,2,2)
+plot(rpm./1000,P02./KPA_TO_PA,'b',rpm./1000,P03./KPA_TO_PA,'c',rpm./1000,P04./KPA_TO_PA,'m',rpm./1000,P05./KPA_TO_PA,'r',rpm./1000,P08./KPA_TO_PA,'g');
+title('Part 2: Station Stagnation Pressure vs Spool Speed');
+ylabel('Stagnation Pressure [kPa]'); 
+xlabel('Spool Speed [rpm x1000]');
+legend('P02','P03','P4','P05','P08', 'Location', 'East');
+if plotfixing; plotfixer; end
+
+
+% Mach Plots
+figure(3)
+%subplot(2,2,3)
+plot(rpm./1000,Ma2,'b',rpm./1000,Ma3,'c',rpm./1000,Ma4,'m',rpm./1000,Ma5,'r',rpm./1000,Ma8,'g');
+title('Part 2: Station Mach Number vs Spool Speed');
+ylabel('Mach number');
+xlabel('Spool Speed [rpm x1000]');
+legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
+if plotfixing; plotfixer; end
+
+
+% Velocity Plots
+figure(4)
+%subplot(2,2,4)
+plot(rpm./1000,U2,'b',rpm./1000,U3,'c',rpm./1000,U4,'m',rpm./1000,U5,'r',rpm./1000,U8,'g');
+title('Part 2: Station Velocity vs Spool Speed');
+ylabel('Velocity [m/s]');
+xlabel('Spool Speed [rpm x1000]');
+legend('U02','U03','U04','U05','U08','Location', 'NorthWest');
+if plotfixing; plotfixer; end
+
+
+% Mass Flow Plots
+figure(5)
+plot(rpm./1000,mdot_air.*KG_TO_G,'b', rpm./1000,mdot_fuel.*KG_TO_G,'c',rpm./1000,AF,'m');
+title('Part 2: Mass flow Rates vs Spool Speed');
+ylabel('Mass FLow Rate [g/s]');
+xlabel('Spool Speed [rpm x1000]');
+legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'Location', 'NorthWest');
+if plotfixing; plotfixer; end
+
+
+% Thrust Flow Plots
+figure(6)
+plot(rpm./1000,Fthrust,'b', rpm./1000,Fthrust_meas,'c');
+title('Part 2: Spool Speed vs Net Thrust and Measured Thrust ');
+ylabel('Thrust [N]');
+xlabel('Spool Speed [rpm x1000]');
+legend('Fthrust (calculated)','Fthrust (measured)', 'Location', 'NorthWest');
+if plotfixing; plotfixer; end
+
+
+% PROJECT 2 PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
+eta_thermal = zeros(size(Qdot));
+for i = 1:size(Qdot, 2);
+    eta_thermal(:,i) = Wnet./Qdot(:,i);
+end
+
+% Thrust Flow Plots
+figure(7)
+%subplot(2,2,1)
+plot(rpm./1000,ST,'b')
+title('Part 3: Specific Thrust vs Spool Speed ');
+ylabel('Thrust [N]');
+xlabel('Spool Speed [rpm x1000]');
+if plotfixing; plotfixer; end
+
+
+figure(8)
+%subplot(2,2,2)
+plot(rpm./1000,TSFC.*1000,'m')
+title('Part 3: Thrust Specific Fuel Consumption vs Spool Speed');
+ylabel('Thrust [g*N/s]');
+xlabel('Spool Speed [rpm x1000]');
+if plotfixing; plotfixer; end
+
+
+figure(9)
+%subplot(2,2,3)
+plot(rpm./1000,eta_thermal);
+title('Part 3: Thermal Efficiency vs Spool Speed ');
+ylabel('Thermal Effeciency');
+xlabel('Spool Speed [rpm x1000]');
+legend('Jet-A','Dodecane');
+if plotfixing; plotfixer; end
+
+
+% PROJECT 2 PART 4: Spool Speed vs. Power Compressor, Power Turbine 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% Adiabatic Efficiencies
+% COMPRESSOR (2->3): total-to-total, Win,isentropic / Win,actual
+% COMBUSTOR (3->4)
+% TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
+% NOZZLE (5->8): total-to-static
+
+Pin_compressor = find_dh_mix( T02,T03,phi );
+Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
+
+% Compressor Outlet
+T03s = applyIsentropicTempVar( T02, P03./P02 );       % tt
+
+% Turbine
+T05s = applyIsentropicTempVar_mix( T04, P05./P04, phi );   % tt
+
+% Nozzle
+T8s = applyIsentropicTempVar_mix( T05, P8./P05, phi );     % ts
+
+f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+f_temp_mix = @(x) sp_heats_mix(x,phi);
+n_compressor = zeros(length(T02),1);
+n_turbine =    zeros(length(T02),1);
+n_nozzle =     zeros(length(T02),1);
+for i = 1:length(T02)    
+    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
+    n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
+    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
+end
+
+P0ratio_combustor = P04./P03;
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% PART 1: Turbine Power Mixed vs. Project #2 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+Pout_turbine_project2 = me140_project2_Pturbine();
+Pout_turbine_300K = me140_project2_300K();
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% PART 2: hf & Adiabatic Flame Temp
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+TR = 300; % [K]  
+phi_range = linspace(0.05, 0.65)';
+[ hf_jetA, TP_part2 ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1:2), Mfuel(1), TR , phi_range );
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% PART 3: Turbine Power using Adiabatic Burned Gas Temp
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% Find Adiabatic Flame Temp, TP = T04 (using T03)
+[~, TP_part3] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1:2), Mfuel(1), T03, phi );
+
+% Find T05s (using T04 = Tp)
+T05s_new = applyIsentropicTempVar( TP_part3, P05./P04 ); 
+
+% Find Isentropic Turbine Work: Wturbine,isentropic = -mdot*Cp*(T05s-T04);
+Pout_turbine_project3 = find_dh_mix( TP_part3,T05s_new,phi );
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% PART 4: ENGINE PERFORMANCE IMPROVEMENTS
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% (1) EFFECT OF INCREASING LOWER HEATING VALUE (LHV)
+% Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
+
+% PART 1 PLOTS
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% Power Plots
+figure(10)
+plot(rpm ./1000, Pin_compressor./1000, 'r', rpm./1000, abs(Pout_turbine_project3)./1000, 'b');
+xlabel('Spool Speed [rpm x1000]');
+ylabel('Power [kW]');
+title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
+legend('Power into Compressor', 'Power Out of Turbine', 'Location', 'NorthWest');
+if plotfixing; plotfixer; end
+
+% Adiabatic Efficiency Plots
+figure(11)
+plot(rpm./1000, n_compressor, 'r', rpm./1000, n_turbine, 'b', rpm./1000, n_nozzle, 'm');
+title('Efficiency of Compressor, Turbine, Nozzle vs Spool Speed');
+xlabel('Spool Speed [rpm x1000]');
+ylabel('Efficiency');
+legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
+if plotfixing; plotfixer; end
+
+% Stagnation Pressure Ratio Across Combustor
+figure(12)
+plot(rpm./1000, P0ratio_combustor, 'g');
+title('Stagnation Pressure Across Combustor vs Spool Speed');
+xlabel('Spool Speed [rpm x1000]');
+ylabel('Stagnation Pressure Ratio, P04/P03');
+if plotfixing; plotfixer; end
+
+% Turbine Power, 3 Ways
+figure(13)
+plot(rpm./1000, abs(Pout_turbine_project3)./1000, 'g',rpm./1000,abs(Pout_turbine_project2)./1000,'c',rpm./1000,abs(Pout_turbine_300K)./1000,'m');
+title('Turbine Power vs Spool Speed');
+xlabel('Spool Speed [rpm x1000]');
+ylabel('Turbine Power [kW]');
+legend('Project 3: accounted for air/fuel mixing','Project 2: Variable Cp','Project 2: Assuming constant Cp = Cp(300K)');
+if plotfixing; plotfixer; end
+
+% PART 2 PLOTS
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% Adiabatic Flame Temp as a Function of Phi
+figure(14)
+plot(phi_range, TP_part2,'b');
+xlabel('Equivalence Ratio, \phi');
+ylabel('Adiabatic Flame Temperature, Tp [K]');
+title('Adiabatic Flame Temp as a Function of Phi');
+if plotfixing; plotfixer; end
+
+##### SOURCE END #####
+--></body></html>
