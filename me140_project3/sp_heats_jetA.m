@@ -1,4 +1,4 @@
-function [cp_m, cv_m, gamma_m, cp_co2, cp_h2o, cp_n2, cp_o2] = sp_heats_mix(T,phi)
+function [cp_m, cv_m, gamma_m, cp_co2, cp_h2o, cp_n2, cp_o2] = sp_heats_jetA(T,phi)
 % Note: 
 % (i) For this entire code refer to each species in the
 % --- produces by these numbers:
@@ -9,7 +9,6 @@ function [cp_m, cv_m, gamma_m, cp_co2, cp_h2o, cp_n2, cp_o2] = sp_heats_mix(T,ph
 % independently.
 
 R = 287;                        % [J/kg*K]
-KJ_to_J = 1000;
 N_to_O = 79/21;                 % Engineering Air Molar Mass Ratio of Nitrogen to Oxygen
 
 a = [22.26 32.24 28.9 25.48]; %[kJ/kmol-K]
@@ -38,10 +37,10 @@ for i = 1: size(N,2) %number of columns in N
 end
 
 P = zeros(4,4);
-P(s.CO2,:) = [d(1) c(1) b(1) a(1)];
-P(s.H2O,:) = [d(2) c(2) b(2) a(2)];
-P(s.N2,:) = [d(3) c(3) b(3) a(3)];
-P(s.O2,:) = [d(4) c(4) b(4) a(4)];
+P(s.CO2,:) = [a(1) b(1) c(1) d(1)];
+P(s.H2O,:) = [a(2) b(2) c(2) d(2)];
+P(s.N2,:) = [a(3) b(3) c(3) d(3)];
+P(s.O2,:) = [a(4) b(4) c(4) d(4)];
 
 cp_m = zeros(size(T));
 cv_m = zeros(size(T));
@@ -57,7 +56,7 @@ for col = 1:size(T,2)
         for spc = 1:length(P)
         % Find Cp for each Species
         cp = polyval(P(spc,:),T(row, col));
-        cp = (cp ./ M(spc))*KJ_to_J; %convert from KJ/kmol-K to J/kg-K
+        cp = cp ./ M(spc); %convert from KJ/kmol-K to J/kg-K
         cv = cp - (R); %R converted to J/kg-K
 
         switch spc

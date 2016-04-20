@@ -11,12 +11,13 @@ function [ T,T0,Ma,U,k ] = findMaTemps_mix( mdot,A,Tm,P0,RF,AF )
 
 error = 0.0001;
 R = 287;
+AFs = 14.43;                    % stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)
 
 % (a) Assume: T0guess = Tm 
 % Initializations
 T0guess = Tm;
 T0 = T0guess + 2 * error;
-[~,~,k] = sp_heats_mix(T0guess,AF);     
+[~,~,k,~,~,~,~] = sp_heats_mix(T0guess,AFs./AF);     
 while abs(T0-T0guess)>error;
         T0guess = T0;
 
@@ -39,7 +40,7 @@ while abs(T0-T0guess)>error;
     T0 = T.*(1+((k-1)./2).*Ma.^2);
 
     % update
-    [~,~,k] = sp_heats_mix(T,AF); 
+    [~,~,k,~,~,~,~] = sp_heats_mix(T,AFs./AF); 
 end
 
 U = Ma.*sqrt(k.*R.*T0);

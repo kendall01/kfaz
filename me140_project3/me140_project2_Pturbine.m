@@ -1,9 +1,10 @@
-% ME 140 PROJECT 3: SR30 TURBOJET ENGINE (COMBUSTION REPORT)
+function [ Pout_turbine ] = me140_project2_Pturbine(~)
+
+% ME 140 PROJECT 2: SR30 TURBOJET ENGINE
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
-% ASSUME: 
-% (i) lean air conditions
 
+clc;
 clear all;
 close all;
 
@@ -16,7 +17,6 @@ KPA_TO_PA = 10^3;
 KG_TO_G = 10^3;
 KJ_TO_J = 10^3;
 R = 287.058;                                            % J/(kg*K)
-plotfixing = 0;       % Boolean for whether or not to run plot fixer
 
 % DATA:
 % ------
@@ -44,19 +44,7 @@ P08 = me140_project2_data(12)' .* KPA_TO_PA + Patm;    % P08 [absolute]
 % ------
 RFcross = linspace(.68, .68, length(rpm))';            % Reference Factor cross-section
 RFaxial = linspace(.86, .86, length(rpm))';            % Reference Factor axial
-hf_co2 =  -393.509 * KJ_TO_J;                          % [J/mol]
-hf_h2o =  -241.818 * KJ_TO_J;
-hf_n2  = 0         * KJ_TO_J;
-hf_o2  = 0         * KJ_TO_J;
-
-% Jet A (Kerosene) vs. Dodecane (C12H26)
-HC_ratio = [1.8 2.17];
-Mfuel = [170 170];
-latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J];        % latent heat of vaporization
-LHV = [42800*KJ_TO_J, 44560*KJ_TO_J];                  % vapor, J/kg
-hf0 = [0 -1712];                                       % vapor, enthalpy of formation J/kg (replace 0 later)
-AFs = 14.43;                    % stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)
-
+LHV = 42800*KJ_TO_J;                                   % J/kg
 
 % Areas [m^2]
 A1 = linspace(27.3, 27.3, length(rpm))' .* IN2_TO_M2;  % Flow area at inlet of bellmouth
@@ -69,13 +57,8 @@ A8 = linspace(3.87, 3.87, length(rpm))' .* IN2_TO_M2;  % Area of nozzle exit
 % CALCULATIONS:
 % -------------
 % -------------------------------------------------------------
-% PART 1: Redo Project 2 with REAL products after the combustor
-% --------------------------------------------------------------
-% Assume: complete combustion of Jet A
-
-
-% PROJECT 2, PART 2: Spool Speed vs. T0,P0,Ma,U,mdot
-% --------------------------------------------------
+% PART 2: Spool Speed vs. T0,P0,Ma,U,mdot
+% -------------------------------------------------------------
 % NOTE:
 % (i) UNITS: all pressures in KPa, temperatures in C, areas in in^2
 % (ii) subscript m = measured temp before Recovery factor adjsutment
@@ -93,7 +76,7 @@ assumeAlso(M2 > 0); %Select the subsonic solution. Set M > 1 if want supersonic 
 Ma2 = vpasolve(P02./P2 ==(1+ M2.^2.*((k2-1)./2)).^(k2./(k2-1)), M2); % Solve for Ma2 [ASSUME: isentropic from 0->2]
 Ma2 = struct(Ma2);
 Ma2 = struct2array(Ma2)'; %Ma is returned as a symbolic variable which doesn't work in polyval in sp_heats
-Ma2 = abs(Ma2);           %This seems kind of sketchy, but looking at the results seems reasonable. Tested positive solution and it is valid, given M2 is squared in all terms.
+Ma2 = abs(Ma2);     %This seems kind of sketchy, but looking at the results seems reasonable. Tested positive solution and it is valid, given M2 is squared in all terms.
 Ma2 = double(Ma2);
 T2  = recoveryFactor(T2m,Ma2,RFcross);
 T02 = T2.*(1 + (Ma2.^2).*((k2-1)./2));
@@ -103,23 +86,21 @@ MFP2 = findMFP(Ma2,k2);
 % Mass Flow of Air and Fuel & Air/Fuel Ratio Plots
 mdot_air = ( MFP2.*A2.*P02 )./sqrt(R.*T02);                 % USE: MFP = (mdot/A)*(sqrt(R*T0)/P0)
 mdot_total = mdot_air + mdot_fuel;
-AF = mdot_air ./ mdot_fuel;                                 % air fuel ratio
+air_fuel_ratio = mdot_air ./ mdot_fuel;
 
 % Station 3 (compressor exit)
 [T3,T03,Ma3,U3,k3] = findMaTemps(mdot_total,A3,T3m,P03,RFcross);
 
-% CODE CHANGES FROM PROJECT # 2 HERE
-% ------------------------------------
 % Station 4 (after combustor, before bend to turbine inlet)
 P04_guess = P4;                                         % P04 = P4 [ASSUME: Ma~<0.1 and delta(P0)~5%, therefore P04~P4] see LEC 6 page 23
-[T4,T04,Ma4,U4,k4] = findMaTemps_mix(mdot_total,A4,T4m,P04_guess,RFcross,AF);
+[T4,T04,Ma4,U4,k4] = findMaTemps(mdot_total,A4,T4m,P04_guess,RFcross);
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));       
 
 % Station 5 (turbine outlet)                                  
-[T5,T05,Ma5,U5,k5] = findMaTemps_mix(mdot_total,A5,T5m,P05,RFaxial,AF);
+[T5,T05,Ma5,U5,k5] = findMaTemps(mdot_total,A5,T5m,P05,RFaxial);
 
 % Station 8 (nozzle exit)            
-[T8,T08,Ma8,U8,k8] = findMaTemps_mix(mdot_total,A8,T8m,P08,RFcross,AF);
+[T8,T08,Ma8,U8,k8] = findMaTemps(mdot_total,A8,T8m,P08,RFcross);
 P8 = P08./(1+ Ma8.^2.*((k8-1)./2)).^(k8./(k8-1));       
 
 % Station 1 (can't be found first)
@@ -133,7 +114,7 @@ u_in = U1;
 u_out = U8;
 Fthrust = (mdot_total .* u_out) - (mdot_air .* u_in);
 ST = Fthrust./mdot_total;
-Qdot = mdot_fuel.*LHV(1);                  
+Qdot = mdot_fuel.*LHV;
 TSFC = mdot_fuel./Fthrust;
 
 % PART 2: PLOTS
@@ -146,7 +127,7 @@ title('Part 2: Station Stagnation Temperature vs Spool Speed');
 ylabel('Stagnation Temperature [K]');
 xlabel('Spool Speed [rpm]');
 legend('T02','T03','T04','T05','T08', 'Location', 'East');
-if plotfixing; plotfixer; end
+plotfixer
 
 % Stagnation Pressure Plots
 figure(2)
@@ -156,8 +137,7 @@ title('Part 2: Station Stagnation Pressure vs Spool Speed');
 ylabel('Stagnation Pressure [kPa]'); 
 xlabel('Spool Speed [rpm]');
 legend('P02','P03','P4','P05','P08', 'Location', 'East');
-if plotfixing; plotfixer; end
-
+plotfixer
 
 % Mach Plots
 figure(3)
@@ -167,8 +147,7 @@ title('Part 2: Station Mach Number vs Spool Speed');
 ylabel('Mach number');
 xlabel('Spool Speed [rpm]');
 legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
-if plotfixing; plotfixer; end
-
+plotfixer
 
 % Velocity Plots
 figure(4)
@@ -178,18 +157,16 @@ title('Part 2: Station Velocity vs Spool Speed');
 ylabel('Velocity [m/s]');
 xlabel('Spool Speed [rpm]');
 legend('U02','U03','U04','U05','U08','Location', 'NorthWest');
-if plotfixing; plotfixer; end
-
+plotfixer
 
 % Mass Flow Plots
 figure(5)
-plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,AF,'m');
+plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,air_fuel_ratio,'m');
 title('Part 2: Mass flow Rates vs Spool Speed');
 ylabel('Mass FLow Rate [g/s]');
 xlabel('Spool Speed [rpm]');
 legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'Location', 'NorthWest');
-if plotfixing; plotfixer; end
-
+plotfixer
 
 % Thrust Flow Plots
 figure(6)
@@ -198,10 +175,10 @@ title('Part 2: Spool Speed vs Net Thrust and Measured Thrust ');
 ylabel('Thrust [N]');
 xlabel('Spool Speed [rpm]');
 legend('Fthrust (calculated)','Fthrust (measured)', 'Location', 'NorthWest');
-if plotfixing; plotfixer; end
+plotfixer
 
-
-% PROJECT 2 PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency
+% -------------------------------------------------------------
+% PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency
 % -------------------------------------------------------------
 Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
 eta_thermal = Wnet./Qdot;
@@ -213,8 +190,7 @@ plot(rpm,ST,'b')
 title('Part 3: Specific Thrust vs Spool Speed ');
 ylabel('Thrust [N]');
 xlabel('Spool Speed [rpm]');
-if plotfixing; plotfixer; end
-
+plotfixer
 
 figure(8)
 %subplot(2,2,2)
@@ -222,8 +198,7 @@ plot(rpm,TSFC,'m')
 title('Part 3: Thrust Specific Fuel Consumption vs Spool Speed');
 ylabel('Thrust [kg*N/s]');
 xlabel('Spool Speed [rpm]');
-if plotfixing; plotfixer; end
-
+plotfixer
 
 figure(9)
 %subplot(2,2,3)
@@ -231,18 +206,18 @@ plot(rpm,eta_thermal,'g');
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
 xlabel('Spool Speed [rpm]');
-if plotfixing; plotfixer; end
+plotfixer
 
-
-% PROJECT 2 PART 4: Spool Speed vs. Power Compressor, Power Turbine 
+% --------------------------------------------------------
+% PART 4: Spool Speed vs. Power Compressor, Power Turbine 
 % --------------------------------------------------------
 % Adiabatic Efficiencies
 % COMPRESSOR (2->3): total-to-total, Win,isentropic / Win,actual
 % TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
 % NOZZLE (5->8): total-to-static
 
-Pin_compressor = find_dh_mix( T02,T03,AFs./AF );
-Pout_turbine = find_dh_mix( T04,T05,AFs./AF );
+Pin_compressor = find_dh( T02,T03 );
+Pout_turbine = find_dh( T04,T05 );
 
 % Compressor
 T03s = applyIsentropicTempVar( T02, P03./P02 );    % tt
@@ -252,6 +227,7 @@ T05s = applyIsentropicTempVar( T04, P05./P04 );    % tt
 
 % Nozzle
 T8s = applyIsentropicTempVar ( T05, P8./P05 );     % ts
+
 
 f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
 n_compressor = zeros(length(T02),1);
@@ -265,29 +241,12 @@ end
 
 P0ratio_combustor = P04./P03;
 
-% ------------------------------------------
-% PART 1: Turbine Power Mixed vs. Project #2 
-% ------------------------------------------
-%Pout_turbine_project2 = me140_project2_Pturbine();
-%Pout_turbine_300K = me140_project2_300K();
+% Apparent Combustion Efficiency 
+Wdotin_air = mdot_air .* find_dh( T03,T04 );
+Qdotin_fuel = mdot_fuel .* LHV;
+n_combustor_apparent = abs(Wdotin_air)./Qdotin_fuel;
 
-
-
-% ---------------------------------
-% PART 2: hf & Adiabatic Flame Temp
-% ---------------------------------
-TR = 300; % [K]  
-[ h_jetA, TP ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR );
-
-
-% -----------------------------------------------------
-% PART 3: Turbine Power using Adiabatic Burned Gas Temp
-% -----------------------------------------------------
-[hjetA_part3, TP_part3] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV, Mfuel, T03 );
-Pout_turbine_project3 = find_dh_mix( TP_part3,T05,AF./AF );
-
-% PART 1 PLOTS
-% ------------
+% Plot 
 % Power Plots
 figure(10)
 plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine), 'b');
@@ -295,7 +254,7 @@ xlabel('Spool Speed (rpm)');
 ylabel('Power (Watts)');
 title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
 legend('Power into Compressor', 'Power Out of Turbine', 'Location', 'NorthWest');
-if plotfixing; plotfixer; end
+plotfixer
 
 % Adiabatic Efficiency Plots
 figure(11)
@@ -304,8 +263,7 @@ title('Efficiency of Compressor, Turbine, Nozzle vs Spool Speed');
 xlabel('Spool Speed (rpm)');
 ylabel('Efficiency');
 legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
-if plotfixing; plotfixer; end
-
+plotfixer
 
 % Stagnation Pressure Ratio Across Combustor
 figure(12)
@@ -313,16 +271,17 @@ plot(rpm, P0ratio_combustor, 'g');
 title('Stagnation Pressure Across Combustor vs Spool Speed');
 xlabel('Spool Speed (rpm)');
 ylabel('Stagnation Pressure Ratio, P04/P03');
-if plotfixing; plotfixer; end
+plotfixer
 
-% Turbine Power, 3 Ways
+% Apparent Combustion Efficiency 
 figure(13)
-plot(rpm, abs(Pout_turbine_project3), 'g',rpm,abs(Pout_turbine_project2),'c',rpm,abs(Pout_turbine_300K),'m');
-title('Stagnation Pressure Across Combustor vs Spool Speed');
+plot(rpm, n_combustor_apparent, 'g');
+title('Apparent Combustion Efficiency vs Spool Speed');
 xlabel('Spool Speed (rpm)');
-ylabel('Stagnation Pressure Ratio, P04/P03');
-legend('Project 3: accounted for air/fuel mixing','Project 2: not accounting for air/fuel mixing','Assuming constant Cp = Cp(300K)');
-if plotfixing; plotfixer; end
+ylabel('Apparent Combustor Efficiency');
+plotfixer
 
 
+
+end
 
