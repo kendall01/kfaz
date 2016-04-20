@@ -231,7 +231,7 @@ if plotfixing; plotfixer; end
 
 figure(9)
 %subplot(2,2,3)
-plot(rpm,eta_thermal,'g');
+plot(rpm,eta_thermal);
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
 xlabel('Spool Speed [rpm]');
@@ -337,13 +337,14 @@ plot(rpm, abs(Pout_turbine_project3), 'g',rpm,abs(Pout_turbine_project2),'c',rpm
 title('Turbine Power vs Spool Speed');
 xlabel('Spool Speed [rpm]');
 ylabel('Turbine Power [Watts]');
-legend('Project 3: accounted for air/fuel mixing','Project 2: not accounting for air/fuel mixing','Project 2: Assuming constant Cp = Cp(300K)');
+legend('Project 3: accounted for air/fuel mixing','Project 2: Variable Cp','Project 2: Assuming constant Cp = Cp(300K)');
 if plotfixing; plotfixer; end
 
 % PART 2 PLOTS
 % ------------
 % Adiabatic Flame Temp as a Function of Phi
+figure(14)
 plot(phi_range, TP_part2,'b');
 xlabel('Equivalence Ratio, \phi');
 ylabel('Adiabatic Flame Temperature, Tp [K]');
-
+title('Adiabatic Flame Temp as a Function of Phi');
