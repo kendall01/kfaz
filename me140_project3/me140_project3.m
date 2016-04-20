@@ -206,7 +206,7 @@ if plotfixing; plotfixer; end
 % -------------------------------------------------------------
 Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
 eta_thermal = zeros(size(Qdot));
-for i = size(Qdot, 2);
+for i = 1:size(Qdot, 2);
     eta_thermal(:,i) = Wnet./Qdot(:,i);
 end
 
@@ -235,6 +235,7 @@ plot(rpm,eta_thermal,'g');
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
 xlabel('Spool Speed [rpm]');
+legend('Jet-A','Dodecane');
 if plotfixing; plotfixer; end
 
 
