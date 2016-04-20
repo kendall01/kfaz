@@ -274,7 +274,6 @@ P0ratio_combustor = P04./P03;
 Pout_turbine_project2 = me140_project2_Pturbine();
 Pout_turbine_300K = me140_project2_300K();
 
-
 % ---------------------------------
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
@@ -342,5 +341,5 @@ if plotfixing; plotfixer; end
 % Adiabatic Flame Temp as a Function of Phi
 plot(phi_range, TP_part2,'b');
 xlabel('Equivalence Ratio, \phi');
-ylabel('Adiabatic Flame Temperature, Tp');
+ylabel('Adiabatic Flame Temperature, Tp [K]');
 

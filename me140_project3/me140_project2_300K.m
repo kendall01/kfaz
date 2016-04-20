@@ -1,4 +1,4 @@
-function [ Pout_turbine ] = me140_project2_300K( ~ )
+function [ Pout_turbine ] = me140_project2_300K(~)
 % ME 140 PROJECT 3: SR30 TURBOJET ENGINE (COMBUSTION REPORT)
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
