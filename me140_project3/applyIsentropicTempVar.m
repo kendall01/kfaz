@@ -25,7 +25,7 @@ parfor i = 1:length(T1)
         diff = RHS(T1(i),T2(i)) - LHS(i);
         iterations = iterations + 1;
     end
-    iterations
+    iterations;
 end
 
 end

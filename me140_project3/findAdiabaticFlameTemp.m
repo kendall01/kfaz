@@ -67,7 +67,7 @@ parfor p = 1:length(phi)
         diff = RHS - LHS(p);
         iterations = iterations + 1;
     end
-    iterations
+    iterations;
     T2f(p) = T2;
 end
     
