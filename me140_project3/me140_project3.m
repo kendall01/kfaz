@@ -134,7 +134,7 @@ u_in = U1;
 u_out = U8;
 Fthrust = (mdot_total .* u_out) - (mdot_air .* u_in);
 ST = Fthrust./mdot_total;
-Qdot = mdot_fuel.*LHV(1);                  
+Qdot = mdot_fuel*LHV(1:2);                  
 TSFC = mdot_fuel./Fthrust;
 
 % PART 2: PLOTS
@@ -205,7 +205,10 @@ if plotfixing; plotfixer; end
 % PROJECT 2 PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency
 % -------------------------------------------------------------
 Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
-eta_thermal = Wnet./Qdot;
+eta_thermal = zeros(size(Qdot));
+for i = size(Qdot, 2);
+    eta_thermal(:,i) = Wnet./Qdot(:,i);
+end
 
 % Thrust Flow Plots
 figure(7)
@@ -274,19 +277,18 @@ P0ratio_combustor = P04./P03;
 Pout_turbine_project2 = me140_project2_Pturbine();
 Pout_turbine_300K = me140_project2_300K();
 
-
 % ---------------------------------
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
 TR = 300; % [K]  
 phi_range = linspace(0.05, 0.65)';
-[ hf_jetA, TP_part2 ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR , phi_range );
+[ hf_jetA, TP_part2 ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1:2), Mfuel(1), TR , phi_range );
 
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
 % -----------------------------------------------------
 % Find Adiabatic Flame Temp, TP = T04 (using T03)
-[~, TP_part3] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), T03, phi );
+[~, TP_part3] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1:2), Mfuel(1), T03, phi );
 
 % Find T05s (using T04 = Tp)
 T05s_new = applyIsentropicTempVar( TP_part3, P05./P04 ); 
