@@ -279,14 +279,14 @@ Pout_turbine_300K = me140_project2_300K();
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
 TR = 300; % [K]  
-[ hf_jetA, ~ ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR );
+[ hf_jetA, ~ ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR , linspace(0.05, 0.65)');
 
 
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
 % -----------------------------------------------------
 % Find Adiabatic Flame Temp, TP = T04 (using T03)
-[~, TP] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), T03 );
+[~, TP] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), T03, phi );
 
 % Find T05s (using T04 = Tp)
 T05s_new = applyIsentropicTempVar( TP, P05./P04 ); 
@@ -305,7 +305,7 @@ Pout_turbine_project3 = find_dh_mix( TP,T05s_new,phi );
 % ------------
 % Power Plots
 figure(10)
-plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine), 'b');
+plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine_project3), 'b');
 xlabel('Spool Speed (rpm)');
 ylabel('Power (Watts)');
 title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
