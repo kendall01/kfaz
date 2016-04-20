@@ -4,9 +4,7 @@ function [ Pout_turbine ] = me140_project2_Pturbine(~)
 % FRANKIE WILLCOX, KENDALL FAGAN, ZACH NEVILLS, ANTOINE SCREVE
 % -------------------------------------------------------------
 
-clc;
-clear all;
-close all;
+
 
 % UNIT CONVERSIONS
 % ----------------
@@ -117,96 +115,6 @@ ST = Fthrust./mdot_total;
 Qdot = mdot_fuel.*LHV;
 TSFC = mdot_fuel./Fthrust;
 
-% PART 2: PLOTS
-% -------------
-% Stagnation Temperature Plots
-figure(1)
-%subplot(2,2,1)
-plot(rpm,T02,'b',rpm,T03,'c',rpm,T04,'m',rpm,T05,'r',rpm,T08,'g');
-title('Part 2: Station Stagnation Temperature vs Spool Speed');
-ylabel('Stagnation Temperature [K]');
-xlabel('Spool Speed [rpm]');
-legend('T02','T03','T04','T05','T08', 'Location', 'East');
-plotfixer
-
-% Stagnation Pressure Plots
-figure(2)
-%subplot(2,2,2)
-plot(rpm,P02./KPA_TO_PA,'b',rpm,P03./KPA_TO_PA,'c',rpm,P04./KPA_TO_PA,'m',rpm,P05./KPA_TO_PA,'r',rpm,P08./KPA_TO_PA,'g');
-title('Part 2: Station Stagnation Pressure vs Spool Speed');
-ylabel('Stagnation Pressure [kPa]'); 
-xlabel('Spool Speed [rpm]');
-legend('P02','P03','P4','P05','P08', 'Location', 'East');
-plotfixer
-
-% Mach Plots
-figure(3)
-%subplot(2,2,3)
-plot(rpm,Ma2,'b',rpm,Ma3,'c',rpm,Ma4,'m',rpm,Ma5,'r',rpm,Ma8,'g');
-title('Part 2: Station Mach Number vs Spool Speed');
-ylabel('Mach number');
-xlabel('Spool Speed [rpm]');
-legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
-plotfixer
-
-% Velocity Plots
-figure(4)
-%subplot(2,2,4)
-plot(rpm,U2,'b',rpm,U3,'c',rpm,U4,'m',rpm,U5,'r',rpm,U8,'g');
-title('Part 2: Station Velocity vs Spool Speed');
-ylabel('Velocity [m/s]');
-xlabel('Spool Speed [rpm]');
-legend('U02','U03','U04','U05','U08','Location', 'NorthWest');
-plotfixer
-
-% Mass Flow Plots
-figure(5)
-plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,air_fuel_ratio,'m');
-title('Part 2: Mass flow Rates vs Spool Speed');
-ylabel('Mass FLow Rate [g/s]');
-xlabel('Spool Speed [rpm]');
-legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'Location', 'NorthWest');
-plotfixer
-
-% Thrust Flow Plots
-figure(6)
-plot(rpm,Fthrust,'b', rpm,Fthrust_meas,'c');
-title('Part 2: Spool Speed vs Net Thrust and Measured Thrust ');
-ylabel('Thrust [N]');
-xlabel('Spool Speed [rpm]');
-legend('Fthrust (calculated)','Fthrust (measured)', 'Location', 'NorthWest');
-plotfixer
-
-% -------------------------------------------------------------
-% PART 3: Spool Speed vs. ST TSFC, Thermal Efficiency
-% -------------------------------------------------------------
-Wnet = 0.5.*( mdot_total.*u_out.^2 - mdot_air.*u_in.^2 );
-eta_thermal = Wnet./Qdot;
-
-% Thrust Flow Plots
-figure(7)
-%subplot(2,2,1)
-plot(rpm,ST,'b')
-title('Part 3: Specific Thrust vs Spool Speed ');
-ylabel('Thrust [N]');
-xlabel('Spool Speed [rpm]');
-plotfixer
-
-figure(8)
-%subplot(2,2,2)
-plot(rpm,TSFC,'m')
-title('Part 3: Thrust Specific Fuel Consumption vs Spool Speed');
-ylabel('Thrust [kg*N/s]');
-xlabel('Spool Speed [rpm]');
-plotfixer
-
-figure(9)
-%subplot(2,2,3)
-plot(rpm,eta_thermal,'g');
-title('Part 3: Thermal Efficiency vs Spool Speed ');
-ylabel('Thermal Effeciency');
-xlabel('Spool Speed [rpm]');
-plotfixer
 
 % --------------------------------------------------------
 % PART 4: Spool Speed vs. Power Compressor, Power Turbine 
