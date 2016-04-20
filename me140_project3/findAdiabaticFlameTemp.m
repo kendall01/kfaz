@@ -25,7 +25,7 @@ N_to_O = 79/21;                 % Engineering Air Molar Mass Ratio of Nitrogen t
 % Find Formation Enthalpy (ASSUME: phi = 1, LEC 5,SLIDE 24) 
 % ---------------------------------------------------------
 phi = 1;
-dh_jetA = find_dh_jetA(T0, TR, phi); %not correct, needs to refer to a new specific heats function that goes through the molar masses of the species in jet fuel
+dh_jetA = 0; %assumption
 Q = LHV*Mfuel;
 hf_jetA = -dh_jetA + 12.3*h_co2 + 11.1*h_h2o + Q; % enthaply of formation, jetA
 
