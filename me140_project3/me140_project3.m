@@ -235,7 +235,8 @@ plot(rpm./1000,eta_thermal(:,1)); %Never says anything about plotting dodecane..
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
 xlabel('Spool Speed [rpm x1000]');
-legend('Jet-A','Dodecane');
+legend('Jet-A');
+%legend('Jet-A','Dodecane');
 if plotfixing; plotfixer; end
 
 
@@ -266,7 +267,8 @@ n_turbine =    zeros(length(T02),1);
 n_nozzle =     zeros(length(T02),1);
 for i = 1:length(T02)    
     n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
-    n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
+    %n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
+    n_turbine(i) =    Pout_turbine_project3(i)/integral( f_temp_mix,T05s(i),T04(i) );
     n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
 end
 
@@ -296,6 +298,20 @@ T05s_new = applyIsentropicTempVar( TP_part3, P05./P04 );
 
 % Find Isentropic Turbine Work: Wturbine,isentropic = -mdot*Cp*(T05s-T04);
 Pout_turbine_project3 = find_dh_mix( TP_part3,T05s_new,phi );
+
+f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+f_temp_mix = @(x) sp_heats_mix(x,phi);
+n_compressor = zeros(length(T02),1);
+n_turbine =    zeros(length(T02),1);
+n_nozzle =     zeros(length(T02),1);
+for i = 1:length(T02)    
+    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
+    %n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
+    n_turbine(i) =    -Pout_turbine_project3(i)/integral( f_temp_mix,T05s(i),T04(i) );
+    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
+end
+
+
 
 % ----------------------------------------
 % PART 4: ENGINE PERFORMANCE IMPROVEMENTS
