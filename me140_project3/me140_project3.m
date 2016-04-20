@@ -185,11 +185,11 @@ if plotfixing; plotfixer; end
 
 % Mass Flow Plots
 figure(5)
-plot(rpm./1000,mdot_air.*KG_TO_G,'b', rpm./1000,mdot_fuel.*KG_TO_G,'c',rpm./1000,AF,'m');
+plot(rpm./1000,mdot_air.*KG_TO_G,'b', rpm./1000,mdot_fuel.*KG_TO_G.*100,'c',rpm./1000,AF,'m');
 title('Part 2: Mass flow Rates vs Spool Speed');
-ylabel('Mass FLow Rate [g/s]');
+ylabel('Mass Flow Rate [g/s]');
 xlabel('Spool Speed [rpm x1000]');
-legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'Location', 'NorthWest');
+legend('Mass Flow Air','Mass Flow Fuel * 100','Air-Fuel Ratio', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 
@@ -225,14 +225,14 @@ figure(8)
 %subplot(2,2,2)
 plot(rpm./1000,TSFC.*1000,'m')
 title('Part 3: Thrust Specific Fuel Consumption vs Spool Speed');
-ylabel('Thrust [g*N/s]');
+ylabel('Thrust [g/N-s]');
 xlabel('Spool Speed [rpm x1000]');
 if plotfixing; plotfixer; end
 
 
 figure(9)
 %subplot(2,2,3)
-plot(rpm./1000,eta_thermal);
+plot(rpm./1000,eta_thermal(:,1)); %Never says anything about plotting dodecane...
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
 xlabel('Spool Speed [rpm x1000]');
@@ -314,6 +314,9 @@ ylabel('Power [kW]');
 title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
 legend('Power into Compressor', 'Power Out of Turbine', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
+%NOTE: TODO:Kind of sketcyh. Goes more like 7-37kW for compressor. Also, we are about
+%to show three turbines, so which is this? Put all three on one plot?
+
 
 % Adiabatic Efficiency Plots
 figure(11)
@@ -323,6 +326,8 @@ xlabel('Spool Speed [rpm x1000]');
 ylabel('Efficiency');
 legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
 if plotfixing; plotfixer; end
+%NOTE TODO: Turbine efficiency should go .1-.5-.42
+
 
 % Stagnation Pressure Ratio Across Combustor
 figure(12)
@@ -340,6 +345,7 @@ xlabel('Spool Speed [rpm x1000]');
 ylabel('Turbine Power [kW]');
 legend('Project 3: accounted for air/fuel mixing','Project 2: Variable Cp','Project 2: Assuming constant Cp = Cp(300K)');
 if plotfixing; plotfixer; end
+%NOTE TODO check this with other people
 
 % PART 2 PLOTS
 % ------------
@@ -350,3 +356,5 @@ xlabel('Equivalence Ratio, \phi');
 ylabel('Adiabatic Flame Temperature, Tp [K]');
 title('Adiabatic Flame Temp as a Function of Phi');
 if plotfixing; plotfixer; end
+%NOTE TODO Are we supposed to plot some other things with dodecane and
+%other stuff?
