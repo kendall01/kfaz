@@ -53,7 +53,7 @@ sum = N * hf'; %intentional matrix multiplication multiplies and sums as desired
 % RHS: integral[ sum( Cp(i)(T')dT') ] from T0 to Tp + Q
 LHS = hf_jetA + dh_jetA - sum;
 
-for p = 0:length(phi)
+for p = 1:length(phi)
 
 
     % Initializations
