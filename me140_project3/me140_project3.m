@@ -269,20 +269,25 @@ P0ratio_combustor = P04./P03;
 % PART 1: Turbine Power Mixed vs. Project #2 
 % ------------------------------------------
 %Pout_turbine_project2 = me140_project2_Pturbine();
+%Pout_turbine_300K = me140_project2_300K();
+
+
 
 % ---------------------------------
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
-TR = 300; % [K]
+TR = 300; % [K]  
 [ h_jetA, TP ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR );
+
 
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
 % -----------------------------------------------------
 [hjetA_part3, TP_part3] = findAdiabaticFlameTemp( h_co2, h_h20, h_n2, h_o2, LHV, Mfuel, T03 );
-Pout_turbine_part3 = find_dh_mix( TP_part3,T05,AF./AF );
+Pout_turbine_project3 = find_dh_mix( TP_part3,T05,AF./AF );
 
-% Plot 
+% PART 1 PLOTS
+% ------------
 % Power Plots
 figure(10)
 plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine), 'b');
@@ -291,7 +296,6 @@ ylabel('Power (Watts)');
 title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
 legend('Power into Compressor', 'Power Out of Turbine', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
-
 
 % Adiabatic Efficiency Plots
 figure(11)
@@ -310,5 +314,15 @@ title('Stagnation Pressure Across Combustor vs Spool Speed');
 xlabel('Spool Speed (rpm)');
 ylabel('Stagnation Pressure Ratio, P04/P03');
 if plotfixing; plotfixer; end
+
+% Turbine Power, 3 Ways
+figure(13)
+plot(rpm, abs(Pout_turbine_project3), 'g',rpm,abs(Pout_turbine_project2),'c',rpm,abs(Pout_turbine_300K),'m');
+title('Stagnation Pressure Across Combustor vs Spool Speed');
+xlabel('Spool Speed (rpm)');
+ylabel('Stagnation Pressure Ratio, P04/P03');
+legend('Project 3: accounted for air/fuel mixing','Project 2: not accounting for air/fuel mixing','Assuming constant Cp = Cp(300K)');
+if plotfixing; plotfixer; end
+
 
 
