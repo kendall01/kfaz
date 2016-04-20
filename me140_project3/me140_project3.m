@@ -16,7 +16,7 @@ KPA_TO_PA = 10^3;
 KG_TO_G = 10^3;
 KJ_TO_J = 10^3;
 R = 287.058;                                            % J/(kg*K)
-plotfixing = 0;       % Boolean for whether or not to run plot fixer
+plotfixing = 1;       % Boolean for whether or not to run plot fixer
 
 % DATA:
 % ------
@@ -143,20 +143,20 @@ TSFC = mdot_fuel./Fthrust;
 % Stagnation Temperature Plots
 figure(1)
 %subplot(2,2,1)
-plot(rpm,T02,'b',rpm,T03,'c',rpm,T04,'m',rpm,T05,'r',rpm,T08,'g');
+plot(rpm./1000,T02,'b',rpm./1000,T03,'c',rpm./1000,T04,'m',rpm./1000,T05,'r',rpm./1000,T08,'g');
 title('Part 2: Station Stagnation Temperature vs Spool Speed');
 ylabel('Stagnation Temperature [K]');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 legend('T02','T03','T04','T05','T08', 'Location', 'East');
 if plotfixing; plotfixer; end
 
 % Stagnation Pressure Plots
 figure(2)
 %subplot(2,2,2)
-plot(rpm,P02./KPA_TO_PA,'b',rpm,P03./KPA_TO_PA,'c',rpm,P04./KPA_TO_PA,'m',rpm,P05./KPA_TO_PA,'r',rpm,P08./KPA_TO_PA,'g');
+plot(rpm./1000,P02./KPA_TO_PA,'b',rpm./1000,P03./KPA_TO_PA,'c',rpm./1000,P04./KPA_TO_PA,'m',rpm./1000,P05./KPA_TO_PA,'r',rpm./1000,P08./KPA_TO_PA,'g');
 title('Part 2: Station Stagnation Pressure vs Spool Speed');
 ylabel('Stagnation Pressure [kPa]'); 
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 legend('P02','P03','P4','P05','P08', 'Location', 'East');
 if plotfixing; plotfixer; end
 
@@ -164,10 +164,10 @@ if plotfixing; plotfixer; end
 % Mach Plots
 figure(3)
 %subplot(2,2,3)
-plot(rpm,Ma2,'b',rpm,Ma3,'c',rpm,Ma4,'m',rpm,Ma5,'r',rpm,Ma8,'g');
+plot(rpm./1000,Ma2,'b',rpm./1000,Ma3,'c',rpm./1000,Ma4,'m',rpm./1000,Ma5,'r',rpm./1000,Ma8,'g');
 title('Part 2: Station Mach Number vs Spool Speed');
 ylabel('Mach number');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
@@ -175,30 +175,30 @@ if plotfixing; plotfixer; end
 % Velocity Plots
 figure(4)
 %subplot(2,2,4)
-plot(rpm,U2,'b',rpm,U3,'c',rpm,U4,'m',rpm,U5,'r',rpm,U8,'g');
+plot(rpm./1000,U2,'b',rpm./1000,U3,'c',rpm./1000,U4,'m',rpm./1000,U5,'r',rpm./1000,U8,'g');
 title('Part 2: Station Velocity vs Spool Speed');
 ylabel('Velocity [m/s]');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 legend('U02','U03','U04','U05','U08','Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 
 % Mass Flow Plots
 figure(5)
-plot(rpm,mdot_air.*KG_TO_G,'b', rpm,mdot_fuel.*KG_TO_G,'c',rpm,AF,'m');
+plot(rpm./1000,mdot_air.*KG_TO_G,'b', rpm./1000,mdot_fuel.*KG_TO_G,'c',rpm./1000,AF,'m');
 title('Part 2: Mass flow Rates vs Spool Speed');
 ylabel('Mass FLow Rate [g/s]');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 
 % Thrust Flow Plots
 figure(6)
-plot(rpm,Fthrust,'b', rpm,Fthrust_meas,'c');
+plot(rpm./1000,Fthrust,'b', rpm./1000,Fthrust_meas,'c');
 title('Part 2: Spool Speed vs Net Thrust and Measured Thrust ');
 ylabel('Thrust [N]');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 legend('Fthrust (calculated)','Fthrust (measured)', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
@@ -214,28 +214,28 @@ end
 % Thrust Flow Plots
 figure(7)
 %subplot(2,2,1)
-plot(rpm,ST,'b')
+plot(rpm./1000,ST,'b')
 title('Part 3: Specific Thrust vs Spool Speed ');
 ylabel('Thrust [N]');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 if plotfixing; plotfixer; end
 
 
 figure(8)
 %subplot(2,2,2)
-plot(rpm,TSFC,'m')
+plot(rpm./1000,TSFC.*1000,'m')
 title('Part 3: Thrust Specific Fuel Consumption vs Spool Speed');
-ylabel('Thrust [kg*N/s]');
-xlabel('Spool Speed [rpm]');
+ylabel('Thrust [g*N/s]');
+xlabel('Spool Speed [rpm x1000]');
 if plotfixing; plotfixer; end
 
 
 figure(9)
 %subplot(2,2,3)
-plot(rpm,eta_thermal);
+plot(rpm./1000,eta_thermal);
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 legend('Jet-A','Dodecane');
 if plotfixing; plotfixer; end
 
@@ -308,36 +308,36 @@ Pout_turbine_project3 = find_dh_mix( TP_part3,T05s_new,phi );
 % ------------
 % Power Plots
 figure(10)
-plot(rpm, Pin_compressor, 'r', rpm, abs(Pout_turbine_project3), 'b');
-xlabel('Spool Speed [rpm]');
-ylabel('Power [Watts]');
+plot(rpm ./1000, Pin_compressor./1000, 'r', rpm./1000, abs(Pout_turbine_project3)./1000, 'b');
+xlabel('Spool Speed [rpm x1000]');
+ylabel('Power [kW]');
 title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
 legend('Power into Compressor', 'Power Out of Turbine', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 % Adiabatic Efficiency Plots
 figure(11)
-plot(rpm, n_compressor, 'r', rpm, n_turbine, 'b', rpm, n_nozzle, 'm');
+plot(rpm./1000, n_compressor, 'r', rpm./1000, n_turbine, 'b', rpm./1000, n_nozzle, 'm');
 title('Efficiency of Compressor, Turbine, Nozzle vs Spool Speed');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 ylabel('Efficiency');
 legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
 if plotfixing; plotfixer; end
 
 % Stagnation Pressure Ratio Across Combustor
 figure(12)
-plot(rpm, P0ratio_combustor, 'g');
+plot(rpm./1000, P0ratio_combustor, 'g');
 title('Stagnation Pressure Across Combustor vs Spool Speed');
-xlabel('Spool Speed [rpm]');
+xlabel('Spool Speed [rpm x1000]');
 ylabel('Stagnation Pressure Ratio, P04/P03');
 if plotfixing; plotfixer; end
 
 % Turbine Power, 3 Ways
 figure(13)
-plot(rpm, abs(Pout_turbine_project3), 'g',rpm,abs(Pout_turbine_project2),'c',rpm,abs(Pout_turbine_300K),'m');
+plot(rpm./1000, abs(Pout_turbine_project3)./1000, 'g',rpm./1000,abs(Pout_turbine_project2)./1000,'c',rpm./1000,abs(Pout_turbine_300K)./1000,'m');
 title('Turbine Power vs Spool Speed');
-xlabel('Spool Speed [rpm]');
-ylabel('Turbine Power [Watts]');
+xlabel('Spool Speed [rpm x1000]');
+ylabel('Turbine Power [kW]');
 legend('Project 3: accounted for air/fuel mixing','Project 2: Variable Cp','Project 2: Assuming constant Cp = Cp(300K)');
 if plotfixing; plotfixer; end
 
@@ -349,3 +349,4 @@ plot(phi_range, TP_part2,'b');
 xlabel('Equivalence Ratio, \phi');
 ylabel('Adiabatic Flame Temperature, Tp [K]');
 title('Adiabatic Flame Temp as a Function of Phi');
+if plotfixing; plotfixer; end
