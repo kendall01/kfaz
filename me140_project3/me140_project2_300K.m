@@ -5,8 +5,6 @@ function [ Pout_turbine ] = me140_project2_300K(~)
 % ASSUME: 
 % (i) lean air conditions
 
-clear all;
-close all;
 
 % UNIT CONVERSIONS
 % ----------------
