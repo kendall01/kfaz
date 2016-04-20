@@ -71,7 +71,7 @@ for p = 1:length(phi)
     % for
     while(abs(diff) > error)
         T2 = T2 - diff./speedFactor;
-        RHS = find_dh_mix(T1,T2,phi(p));
+        RHS = -1*find_dh_mix(T1,T2,phi(p));
         diff = RHS - LHS;
         iterations = iterations + 1;
     end
