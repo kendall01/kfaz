@@ -268,7 +268,7 @@ P0ratio_combustor = P04./P03;
 % ------------------------------------------
 % PART 1: Turbine Power Mixed vs. Project #2 
 % ------------------------------------------
-Pout_turbine_project2 = me140_project2_Pturbine(~);
+%Pout_turbine_project2 = me140_project2_Pturbine();
 
 % ---------------------------------
 % PART 2: hf & Adiabatic Flame Temp
