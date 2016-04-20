@@ -53,7 +53,8 @@ hf_o2  = 0         * KJ_TO_J;
 HC_ratio = [1.8 2.17];
 Mfuel = [170 170];
 latent_heat_vap= [42800*KJ_TO_J 44560*KJ_TO_J ];        % latent heat of vaporization
-LHV = [42800*KJ_TO_J, 44560*KJ_TO_J, 42900*KJ_TO_J ];   % vapor, J/kg Jet-A, Dodecane, TS-1 (source:Aviation Tech Review)
+LHV = [42800*KJ_TO_J, 44560*KJ_TO_J];   % vapor, J/kg Jet-A, Dodecane, TS-1 (source:Aviation Tech Review)
+%LHV = [42800*KJ_TO_J, 44560*KJ_TO_J, 42900*KJ_TO_J ];   % vapor, J/kg Jet-A, Dodecane, TS-1 (source:Aviation Tech Review)
 hf0 = [0 -1712];                                        % vapor, enthalpy of formation J/kg (replace 0 later)
 AFs = 14.43;                                            % stoichiometric Air-Fuel-Ratio, found from balancing equation (LEC 5, slides 3-4)
 
@@ -279,8 +280,8 @@ Pout_turbine_300K = me140_project2_300K();
 % PART 2: hf & Adiabatic Flame Temp
 % ---------------------------------
 TR = 300; % [K]  
-[ hf_jetA, TP ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR , linspace(0.05, 0.65)');
-
+phi_range = linspace(0.05, 0.65)';
+[ hf_jetA, TP_part2 ] = findAdiabaticFlameTemp( hf_co2, hf_h2o, hf_n2, hf_o2, LHV(1), Mfuel(1), TR , phi_range );
 
 % -----------------------------------------------------
 % PART 3: Turbine Power using Adiabatic Burned Gas Temp
@@ -337,5 +338,10 @@ ylabel('Turbine Power [Watts]');
 legend('Project 3: accounted for air/fuel mixing','Project 2: not accounting for air/fuel mixing','Project 2: Assuming constant Cp = Cp(300K)');
 if plotfixing; plotfixer; end
 
-
+% PART 2 PLOTS
+% ------------
+% Adiabatic Flame Temp as a Function of Phi
+plot(phi_range, TP_part2,'b');
+xlabel('Equivalence Ratio, \phi');
+ylabel('Adiabatic Flame Temperature, Tp');
 
