@@ -344,5 +344,5 @@ if plotfixing; plotfixer; end
 % Adiabatic Flame Temp as a Function of Phi
 plot(phi_range, TP_part2,'b');
 xlabel('Equivalence Ratio, \phi');
-ylabel('Adiabatic Flame Temperature, Tp');
+ylabel('Adiabatic Flame Temperature, Tp [K]');
 
