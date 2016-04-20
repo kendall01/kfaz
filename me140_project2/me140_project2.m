@@ -214,8 +214,8 @@ plotfixer
 % TURBINE (4->5): total-to-total, assume exhaust KE is not a loss, aeropropulsive
 % NOZZLE (5->8): total-to-static
 
-Pin_compressor = find_dh( T02,T03 );
-Pout_turbine = find_dh( T04,T05 );
+Pin_compressor = find_dh( T02,T03 ) .* mdot_air;
+Pout_turbine = find_dh( T04,T05 ) .* mdot_total;
 
 % Compressor
 T03s = applyIsentropicTempVar( T02, P03./P02 );    % tt
