@@ -6,7 +6,7 @@
 
 %Change the following values to suit your preferences.  The variable
 %names and comments that follow explain what each does and their options.
-
+grid on
 plotlsize = 1.2; %thickness of plotted lines, in points
 axislsize = 1; %thickness of tick marks and borders, in points
 markersize = 8;  %size of line markers, default is 6
