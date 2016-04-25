@@ -184,6 +184,7 @@ P04_guess = P4;                                         <span class="comment">% 
 [T4,T04,Ma4,U4,k4] = findMaTemps_mix(mdot_total,A4,T4m,P04_guess,RFcross,AF);
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));
 
+
 <span class="comment">% Station 5 (turbine outlet)</span>
 [T5,T05,Ma5,U5,k5] = findMaTemps_mix(mdot_total,A5,T5m,P05,RFaxial,AF);
 
@@ -210,53 +211,53 @@ TSFC = mdot_fuel./Fthrust;
 <span class="comment">% Stagnation Temperature Plots</span>
 figure(1)
 <span class="comment">%subplot(2,2,1)</span>
-plot(rpm./1000,T02,<span class="string">'b'</span>,rpm./1000,T03,<span class="string">'c'</span>,rpm./1000,T04,<span class="string">'m'</span>,rpm./1000,T05,<span class="string">'r'</span>,rpm./1000,T08,<span class="string">'g'</span>);
+plot(rpm./1000,T01,<span class="string">'*'</span>,rpm./1000,T02,<span class="string">'b'</span>,rpm./1000,T03,<span class="string">'c'</span>,rpm./1000,T04,<span class="string">'m'</span>,rpm./1000,T05,<span class="string">'r'</span>,rpm./1000,T08,<span class="string">'g'</span>);
 title(<span class="string">'Part 2: Station Stagnation Temperature vs Spool Speed'</span>);
 ylabel(<span class="string">'Stagnation Temperature [K]'</span>);
 xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
-legend(<span class="string">'T02'</span>,<span class="string">'T03'</span>,<span class="string">'T04'</span>,<span class="string">'T05'</span>,<span class="string">'T08'</span>, <span class="string">'Location'</span>, <span class="string">'East'</span>);
+legend(<span class="string">'T01'</span>,<span class="string">'T02'</span>,<span class="string">'T03'</span>,<span class="string">'T04'</span>,<span class="string">'T05'</span>,<span class="string">'T08'</span>, <span class="string">'Location'</span>, <span class="string">'East'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
 
 <span class="comment">% Stagnation Pressure Plots</span>
 figure(2)
 <span class="comment">%subplot(2,2,2)</span>
-plot(rpm./1000,P02./KPA_TO_PA,<span class="string">'b'</span>,rpm./1000,P03./KPA_TO_PA,<span class="string">'c'</span>,rpm./1000,P04./KPA_TO_PA,<span class="string">'m'</span>,rpm./1000,P05./KPA_TO_PA,<span class="string">'r'</span>,rpm./1000,P08./KPA_TO_PA,<span class="string">'g'</span>);
+plot(rpm./1000,P01./KPA_TO_PA,<span class="string">'*'</span>,rpm./1000,P02./KPA_TO_PA,<span class="string">'b'</span>,rpm./1000,P03./KPA_TO_PA,<span class="string">'c'</span>,rpm./1000,P04./KPA_TO_PA,<span class="string">'m'</span>,rpm./1000,P05./KPA_TO_PA,<span class="string">'r'</span>,rpm./1000,P08./KPA_TO_PA,<span class="string">'g'</span>);
 title(<span class="string">'Part 2: Station Stagnation Pressure vs Spool Speed'</span>);
 ylabel(<span class="string">'Stagnation Pressure [kPa]'</span>);
 xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
-legend(<span class="string">'P02'</span>,<span class="string">'P03'</span>,<span class="string">'P4'</span>,<span class="string">'P05'</span>,<span class="string">'P08'</span>, <span class="string">'Location'</span>, <span class="string">'East'</span>);
+legend(<span class="string">'P01'</span>,<span class="string">'P02'</span>,<span class="string">'P03'</span>,<span class="string">'P4'</span>,<span class="string">'P05'</span>,<span class="string">'P08'</span>, <span class="string">'Location'</span>, <span class="string">'East'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
 
-
+Ma1 = U1 ./ (sqrt(1.4*287.*T01));
 <span class="comment">% Mach Plots</span>
 figure(3)
 <span class="comment">%subplot(2,2,3)</span>
-plot(rpm./1000,Ma2,<span class="string">'b'</span>,rpm./1000,Ma3,<span class="string">'c'</span>,rpm./1000,Ma4,<span class="string">'m'</span>,rpm./1000,Ma5,<span class="string">'r'</span>,rpm./1000,Ma8,<span class="string">'g'</span>);
+plot(rpm./1000,Ma1,<span class="string">'*'</span>,rpm./1000,Ma2,<span class="string">'b'</span>,rpm./1000,Ma3,<span class="string">'c'</span>,rpm./1000,Ma4,<span class="string">'m'</span>,rpm./1000,Ma5,<span class="string">'r'</span>,rpm./1000,Ma8,<span class="string">'g'</span>);
 title(<span class="string">'Part 2: Station Mach Number vs Spool Speed'</span>);
 ylabel(<span class="string">'Mach number'</span>);
 xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
-legend(<span class="string">'Ma2'</span>,<span class="string">'Ma3'</span>,<span class="string">'Ma4'</span>,<span class="string">'Ma5'</span>,<span class="string">'Ma8'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+legend(<span class="string">'Ma1'</span>,<span class="string">'Ma2'</span>,<span class="string">'Ma3'</span>,<span class="string">'Ma4'</span>,<span class="string">'Ma5'</span>,<span class="string">'Ma8'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
 
 
 <span class="comment">% Velocity Plots</span>
 figure(4)
 <span class="comment">%subplot(2,2,4)</span>
-plot(rpm./1000,U2,<span class="string">'b'</span>,rpm./1000,U3,<span class="string">'c'</span>,rpm./1000,U4,<span class="string">'m'</span>,rpm./1000,U5,<span class="string">'r'</span>,rpm./1000,U8,<span class="string">'g'</span>);
+plot(rpm./1000,U1,<span class="string">'*'</span>,rpm./1000,U2,<span class="string">'b'</span>,rpm./1000,U3,<span class="string">'c'</span>,rpm./1000,U4,<span class="string">'m'</span>,rpm./1000,U5,<span class="string">'r'</span>,rpm./1000,U8,<span class="string">'g'</span>);
 title(<span class="string">'Part 2: Station Velocity vs Spool Speed'</span>);
 ylabel(<span class="string">'Velocity [m/s]'</span>);
 xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
-legend(<span class="string">'U02'</span>,<span class="string">'U03'</span>,<span class="string">'U04'</span>,<span class="string">'U05'</span>,<span class="string">'U08'</span>,<span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+legend(<span class="string">'U1'</span>,<span class="string">'U2'</span>,<span class="string">'U3'</span>,<span class="string">'U4'</span>,<span class="string">'U5'</span>,<span class="string">'U8'</span>,<span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
 
 
 <span class="comment">% Mass Flow Plots</span>
 figure(5)
-plot(rpm./1000,mdot_air.*KG_TO_G,<span class="string">'b'</span>, rpm./1000,mdot_fuel.*KG_TO_G,<span class="string">'c'</span>,rpm./1000,AF,<span class="string">'m'</span>);
+plot(rpm./1000,mdot_air.*KG_TO_G,<span class="string">'b'</span>, rpm./1000,mdot_fuel.*KG_TO_G.*100,<span class="string">'c'</span>,rpm./1000,AF,<span class="string">'m'</span>);
 title(<span class="string">'Part 2: Mass flow Rates vs Spool Speed'</span>);
-ylabel(<span class="string">'Mass FLow Rate [g/s]'</span>);
+ylabel(<span class="string">'Mass Flow Rate [g/s]'</span>);
 xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
-legend(<span class="string">'Mass Flow Air'</span>,<span class="string">'Mass Flow Fuel'</span>,<span class="string">'Air-Fuel Ratio'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
+legend(<span class="string">'Mass Flow Air'</span>,<span class="string">'Mass Flow Fuel * 100'</span>,<span class="string">'Air-Fuel Ratio'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
 
 
@@ -292,18 +293,19 @@ figure(8)
 <span class="comment">%subplot(2,2,2)</span>
 plot(rpm./1000,TSFC.*1000,<span class="string">'m'</span>)
 title(<span class="string">'Part 3: Thrust Specific Fuel Consumption vs Spool Speed'</span>);
-ylabel(<span class="string">'Thrust [g*N/s]'</span>);
+ylabel(<span class="string">'Thrust [g/N-s]'</span>);
 xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
 
 
 figure(9)
 <span class="comment">%subplot(2,2,3)</span>
-plot(rpm./1000,eta_thermal);
+plot(rpm./1000,eta_thermal(:,1)); <span class="comment">%Never says anything about plotting dodecane...</span>
 title(<span class="string">'Part 3: Thermal Efficiency vs Spool Speed '</span>);
 ylabel(<span class="string">'Thermal Effeciency'</span>);
 xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
-legend(<span class="string">'Jet-A'</span>,<span class="string">'Dodecane'</span>);
+legend(<span class="string">'Jet-A'</span>);
+<span class="comment">%legend('Jet-A','Dodecane');</span>
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
 
 
@@ -316,7 +318,7 @@ legend(<span class="string">'Jet-A'</span>,<span class="string">'Dodecane'</span
 <span class="comment">% NOZZLE (5-&gt;8): total-to-static</span>
 
 Pin_compressor = find_dh_mix( T02,T03,phi );
-Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
+<span class="comment">%Pout_turbine_project3 = find_dh_mix( T04,T05,phi );</span>
 
 <span class="comment">% Compressor Outlet</span>
 T03s = applyIsentropicTempVar( T02, P03./P02 );       <span class="comment">% tt</span>
@@ -327,16 +329,6 @@ T05s = applyIsentropicTempVar_mix( T04, P05./P04, phi );   <span class="comment"
 <span class="comment">% Nozzle</span>
 T8s = applyIsentropicTempVar_mix( T05, P8./P05, phi );     <span class="comment">% ts</span>
 
-f_temp = @(x) sp_heats(x); <span class="comment">%Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double</span>
-f_temp_mix = @(x) sp_heats_mix(x,phi);
-n_compressor = zeros(length(T02),1);
-n_turbine =    zeros(length(T02),1);
-n_nozzle =     zeros(length(T02),1);
-<span class="keyword">for</span> i = 1:length(T02)
-    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
-    n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
-    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
-<span class="keyword">end</span>
 
 P0ratio_combustor = P04./P03;
 
@@ -365,6 +357,20 @@ T05s_new = applyIsentropicTempVar( TP_part3, P05./P04 );
 <span class="comment">% Find Isentropic Turbine Work: Wturbine,isentropic = -mdot*Cp*(T05s-T04);</span>
 Pout_turbine_project3 = find_dh_mix( TP_part3,T05s_new,phi );
 
+f_temp = @(x) sp_heats(x); <span class="comment">%Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double</span>
+f_temp_mix = @(x) sp_heats_mix(x,phi);
+n_compressor = zeros(length(T02),1);
+n_turbine =    zeros(length(T02),1);
+n_nozzle =     zeros(length(T02),1);
+<span class="keyword">for</span> i = 1:length(T02)
+    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
+    <span class="comment">%n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );</span>
+    n_turbine(i) =    -Pout_turbine_project3(i)/Qdot(i,1);
+    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
+<span class="keyword">end</span>
+
+
+
 <span class="comment">% ----------------------------------------</span>
 <span class="comment">% PART 4: ENGINE PERFORMANCE IMPROVEMENTS</span>
 <span class="comment">% ----------------------------------------</span>
@@ -381,6 +387,9 @@ ylabel(<span class="string">'Power [kW]'</span>);
 title(<span class="string">'Power into Compressor and Power Out of Turbine vs. Spool Spped'</span>);
 legend(<span class="string">'Power into Compressor'</span>, <span class="string">'Power Out of Turbine'</span>, <span class="string">'Location'</span>, <span class="string">'NorthWest'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+<span class="comment">%NOTE: TODO:Kind of sketcyh. Goes more like 7-37kW for compressor. Also, we are about</span>
+<span class="comment">%to show three turbines, so which is this? Put all three on one plot?</span>
+
 
 <span class="comment">% Adiabatic Efficiency Plots</span>
 figure(11)
@@ -390,6 +399,8 @@ xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
 ylabel(<span class="string">'Efficiency'</span>);
 legend(<span class="string">'Compressor Efficiency'</span>, <span class="string">'Turbine Efficiency'</span>, <span class="string">'Nozzle Efficiency'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+<span class="comment">%NOTE TODO: Turbine efficiency should go .1-.5-.42</span>
+
 
 <span class="comment">% Stagnation Pressure Ratio Across Combustor</span>
 figure(12)
@@ -407,16 +418,20 @@ xlabel(<span class="string">'Spool Speed [rpm x1000]'</span>);
 ylabel(<span class="string">'Turbine Power [kW]'</span>);
 legend(<span class="string">'Project 3: accounted for air/fuel mixing'</span>,<span class="string">'Project 2: Variable Cp'</span>,<span class="string">'Project 2: Assuming constant Cp = Cp(300K)'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+<span class="comment">%NOTE TODO check this with other people</span>
 
 <span class="comment">% PART 2 PLOTS</span>
 <span class="comment">% ------------</span>
 <span class="comment">% Adiabatic Flame Temp as a Function of Phi</span>
 figure(14)
-plot(phi_range, TP_part2,<span class="string">'b'</span>);
+plot(phi_range, TP_part2);
 xlabel(<span class="string">'Equivalence Ratio, \phi'</span>);
 ylabel(<span class="string">'Adiabatic Flame Temperature, Tp [K]'</span>);
 title(<span class="string">'Adiabatic Flame Temp as a Function of Phi'</span>);
+legend(<span class="string">'Jet-A'</span>,<span class="string">'Dodecane'</span>, <span class="string">'Location'</span>, <span class="string">'SouthEast'</span>);
 <span class="keyword">if</span> plotfixing; plotfixer; <span class="keyword">end</span>
+<span class="comment">%NOTE TODO Are we supposed to plot some other things with dodecane and</span>
+<span class="comment">%other stuff?</span>
 </pre><img vspace="5" hspace="5" src="me140_project3_01.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_02.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_03.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_04.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_05.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_06.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_07.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_08.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_09.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_10.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_11.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_12.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_13.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="me140_project3_14.png" style="width:560px;height:420px;" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 % ME 140 PROJECT 3: SR30 TURBOJET ENGINE (COMBUSTION REPORT)
@@ -537,6 +552,7 @@ P04_guess = P4;                                         % P04 = P4 [ASSUME: Ma~<
 [T4,T04,Ma4,U4,k4] = findMaTemps_mix(mdot_total,A4,T4m,P04_guess,RFcross,AF);
 P04 = P4.*(1+ Ma4.^2.*((k4-1)./2)).^(k4./(k4-1));       
 
+
 % Station 5 (turbine outlet)                                  
 [T5,T05,Ma5,U5,k5] = findMaTemps_mix(mdot_total,A5,T5m,P05,RFaxial,AF);
 
@@ -563,53 +579,53 @@ TSFC = mdot_fuel./Fthrust;
 % Stagnation Temperature Plots
 figure(1)
 %subplot(2,2,1)
-plot(rpm./1000,T02,'b',rpm./1000,T03,'c',rpm./1000,T04,'m',rpm./1000,T05,'r',rpm./1000,T08,'g');
+plot(rpm./1000,T01,'*',rpm./1000,T02,'b',rpm./1000,T03,'c',rpm./1000,T04,'m',rpm./1000,T05,'r',rpm./1000,T08,'g');
 title('Part 2: Station Stagnation Temperature vs Spool Speed');
 ylabel('Stagnation Temperature [K]');
 xlabel('Spool Speed [rpm x1000]');
-legend('T02','T03','T04','T05','T08', 'Location', 'East');
+legend('T01','T02','T03','T04','T05','T08', 'Location', 'East');
 if plotfixing; plotfixer; end
 
 % Stagnation Pressure Plots
 figure(2)
 %subplot(2,2,2)
-plot(rpm./1000,P02./KPA_TO_PA,'b',rpm./1000,P03./KPA_TO_PA,'c',rpm./1000,P04./KPA_TO_PA,'m',rpm./1000,P05./KPA_TO_PA,'r',rpm./1000,P08./KPA_TO_PA,'g');
+plot(rpm./1000,P01./KPA_TO_PA,'*',rpm./1000,P02./KPA_TO_PA,'b',rpm./1000,P03./KPA_TO_PA,'c',rpm./1000,P04./KPA_TO_PA,'m',rpm./1000,P05./KPA_TO_PA,'r',rpm./1000,P08./KPA_TO_PA,'g');
 title('Part 2: Station Stagnation Pressure vs Spool Speed');
 ylabel('Stagnation Pressure [kPa]'); 
 xlabel('Spool Speed [rpm x1000]');
-legend('P02','P03','P4','P05','P08', 'Location', 'East');
+legend('P01','P02','P03','P4','P05','P08', 'Location', 'East');
 if plotfixing; plotfixer; end
 
-
+Ma1 = U1 ./ (sqrt(1.4*287.*T01));
 % Mach Plots
 figure(3)
 %subplot(2,2,3)
-plot(rpm./1000,Ma2,'b',rpm./1000,Ma3,'c',rpm./1000,Ma4,'m',rpm./1000,Ma5,'r',rpm./1000,Ma8,'g');
+plot(rpm./1000,Ma1,'*',rpm./1000,Ma2,'b',rpm./1000,Ma3,'c',rpm./1000,Ma4,'m',rpm./1000,Ma5,'r',rpm./1000,Ma8,'g');
 title('Part 2: Station Mach Number vs Spool Speed');
 ylabel('Mach number');
 xlabel('Spool Speed [rpm x1000]');
-legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
+legend('Ma1','Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 
 % Velocity Plots
 figure(4)
 %subplot(2,2,4)
-plot(rpm./1000,U2,'b',rpm./1000,U3,'c',rpm./1000,U4,'m',rpm./1000,U5,'r',rpm./1000,U8,'g');
+plot(rpm./1000,U1,'*',rpm./1000,U2,'b',rpm./1000,U3,'c',rpm./1000,U4,'m',rpm./1000,U5,'r',rpm./1000,U8,'g');
 title('Part 2: Station Velocity vs Spool Speed');
 ylabel('Velocity [m/s]');
 xlabel('Spool Speed [rpm x1000]');
-legend('U02','U03','U04','U05','U08','Location', 'NorthWest');
+legend('U1','U2','U3','U4','U5','U8','Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 
 % Mass Flow Plots
 figure(5)
-plot(rpm./1000,mdot_air.*KG_TO_G,'b', rpm./1000,mdot_fuel.*KG_TO_G,'c',rpm./1000,AF,'m');
+plot(rpm./1000,mdot_air.*KG_TO_G,'b', rpm./1000,mdot_fuel.*KG_TO_G.*100,'c',rpm./1000,AF,'m');
 title('Part 2: Mass flow Rates vs Spool Speed');
-ylabel('Mass FLow Rate [g/s]');
+ylabel('Mass Flow Rate [g/s]');
 xlabel('Spool Speed [rpm x1000]');
-legend('Mass Flow Air','Mass Flow Fuel','Air-Fuel Ratio', 'Location', 'NorthWest');
+legend('Mass Flow Air','Mass Flow Fuel * 100','Air-Fuel Ratio', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 
@@ -645,18 +661,19 @@ figure(8)
 %subplot(2,2,2)
 plot(rpm./1000,TSFC.*1000,'m')
 title('Part 3: Thrust Specific Fuel Consumption vs Spool Speed');
-ylabel('Thrust [g*N/s]');
+ylabel('Thrust [g/N-s]');
 xlabel('Spool Speed [rpm x1000]');
 if plotfixing; plotfixer; end
 
 
 figure(9)
 %subplot(2,2,3)
-plot(rpm./1000,eta_thermal);
+plot(rpm./1000,eta_thermal(:,1)); %Never says anything about plotting dodecane...
 title('Part 3: Thermal Efficiency vs Spool Speed ');
 ylabel('Thermal Effeciency');
 xlabel('Spool Speed [rpm x1000]');
-legend('Jet-A','Dodecane');
+legend('Jet-A');
+%legend('Jet-A','Dodecane');
 if plotfixing; plotfixer; end
 
 
@@ -669,7 +686,7 @@ if plotfixing; plotfixer; end
 % NOZZLE (5->8): total-to-static
 
 Pin_compressor = find_dh_mix( T02,T03,phi );
-Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
+%Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
 
 % Compressor Outlet
 T03s = applyIsentropicTempVar( T02, P03./P02 );       % tt
@@ -680,16 +697,6 @@ T05s = applyIsentropicTempVar_mix( T04, P05./P04, phi );   % tt
 % Nozzle
 T8s = applyIsentropicTempVar_mix( T05, P8./P05, phi );     % ts
 
-f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
-f_temp_mix = @(x) sp_heats_mix(x,phi);
-n_compressor = zeros(length(T02),1);
-n_turbine =    zeros(length(T02),1);
-n_nozzle =     zeros(length(T02),1);
-for i = 1:length(T02)    
-    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
-    n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
-    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
-end
 
 P0ratio_combustor = P04./P03;
 
@@ -718,6 +725,20 @@ T05s_new = applyIsentropicTempVar( TP_part3, P05./P04 );
 % Find Isentropic Turbine Work: Wturbine,isentropic = -mdot*Cp*(T05s-T04);
 Pout_turbine_project3 = find_dh_mix( TP_part3,T05s_new,phi );
 
+f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
+f_temp_mix = @(x) sp_heats_mix(x,phi);
+n_compressor = zeros(length(T02),1);
+n_turbine =    zeros(length(T02),1);
+n_nozzle =     zeros(length(T02),1);
+for i = 1:length(T02)    
+    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
+    %n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
+    n_turbine(i) =    -Pout_turbine_project3(i)/Qdot(i,1);
+    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
+end
+
+
+
 % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
 % PART 4: ENGINE PERFORMANCE IMPROVEMENTS
 % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
@@ -734,6 +755,9 @@ ylabel('Power [kW]');
 title('Power into Compressor and Power Out of Turbine vs. Spool Spped');
 legend('Power into Compressor', 'Power Out of Turbine', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
+%NOTE: TODO:Kind of sketcyh. Goes more like 7-37kW for compressor. Also, we are about
+%to show three turbines, so which is this? Put all three on one plot?
+
 
 % Adiabatic Efficiency Plots
 figure(11)
@@ -743,6 +767,8 @@ xlabel('Spool Speed [rpm x1000]');
 ylabel('Efficiency');
 legend('Compressor Efficiency', 'Turbine Efficiency', 'Nozzle Efficiency');
 if plotfixing; plotfixer; end
+%NOTE TODO: Turbine efficiency should go .1-.5-.42
+
 
 % Stagnation Pressure Ratio Across Combustor
 figure(12)
@@ -760,16 +786,20 @@ xlabel('Spool Speed [rpm x1000]');
 ylabel('Turbine Power [kW]');
 legend('Project 3: accounted for air/fuel mixing','Project 2: Variable Cp','Project 2: Assuming constant Cp = Cp(300K)');
 if plotfixing; plotfixer; end
+%NOTE TODO check this with other people
 
 % PART 2 PLOTS
 % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
 % Adiabatic Flame Temp as a Function of Phi
 figure(14)
-plot(phi_range, TP_part2,'b');
+plot(phi_range, TP_part2);
 xlabel('Equivalence Ratio, \phi');
 ylabel('Adiabatic Flame Temperature, Tp [K]');
 title('Adiabatic Flame Temp as a Function of Phi');
+legend('Jet-A','Dodecane', 'Location', 'SouthEast');
 if plotfixing; plotfixer; end
+%NOTE TODO Are we supposed to plot some other things with dodecane and
+%other stuff?
 
 ##### SOURCE END #####
 --></body></html>
