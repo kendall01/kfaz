@@ -143,43 +143,43 @@ TSFC = mdot_fuel./Fthrust;
 % Stagnation Temperature Plots
 figure(1)
 %subplot(2,2,1)
-plot(rpm./1000,T02,'b',rpm./1000,T03,'c',rpm./1000,T04,'m',rpm./1000,T05,'r',rpm./1000,T08,'g');
+plot(rpm./1000,T01,'*',rpm./1000,T02,'b',rpm./1000,T03,'c',rpm./1000,T04,'m',rpm./1000,T05,'r',rpm./1000,T08,'g');
 title('Part 2: Station Stagnation Temperature vs Spool Speed');
 ylabel('Stagnation Temperature [K]');
 xlabel('Spool Speed [rpm x1000]');
-legend('T02','T03','T04','T05','T08', 'Location', 'East');
+legend('T01','T02','T03','T04','T05','T08', 'Location', 'East');
 if plotfixing; plotfixer; end
 
 % Stagnation Pressure Plots
 figure(2)
 %subplot(2,2,2)
-plot(rpm./1000,P02./KPA_TO_PA,'b',rpm./1000,P03./KPA_TO_PA,'c',rpm./1000,P04./KPA_TO_PA,'m',rpm./1000,P05./KPA_TO_PA,'r',rpm./1000,P08./KPA_TO_PA,'g');
+plot(rpm./1000,P01./KPA_TO_PA,'*',rpm./1000,P02./KPA_TO_PA,'b',rpm./1000,P03./KPA_TO_PA,'c',rpm./1000,P04./KPA_TO_PA,'m',rpm./1000,P05./KPA_TO_PA,'r',rpm./1000,P08./KPA_TO_PA,'g');
 title('Part 2: Station Stagnation Pressure vs Spool Speed');
 ylabel('Stagnation Pressure [kPa]'); 
 xlabel('Spool Speed [rpm x1000]');
-legend('P02','P03','P4','P05','P08', 'Location', 'East');
+legend('P01','P02','P03','P4','P05','P08', 'Location', 'East');
 if plotfixing; plotfixer; end
 
-
+Ma1 = U1 ./ (sqrt(1.4*287.*T01));
 % Mach Plots
 figure(3)
 %subplot(2,2,3)
-plot(rpm./1000,Ma2,'b',rpm./1000,Ma3,'c',rpm./1000,Ma4,'m',rpm./1000,Ma5,'r',rpm./1000,Ma8,'g');
+plot(rpm./1000,Ma1,'*',rpm./1000,Ma2,'b',rpm./1000,Ma3,'c',rpm./1000,Ma4,'m',rpm./1000,Ma5,'r',rpm./1000,Ma8,'g');
 title('Part 2: Station Mach Number vs Spool Speed');
 ylabel('Mach number');
 xlabel('Spool Speed [rpm x1000]');
-legend('Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
+legend('Ma1','Ma2','Ma3','Ma4','Ma5','Ma8', 'Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 
 % Velocity Plots
 figure(4)
 %subplot(2,2,4)
-plot(rpm./1000,U2,'b',rpm./1000,U3,'c',rpm./1000,U4,'m',rpm./1000,U5,'r',rpm./1000,U8,'g');
+plot(rpm./1000,U1,'*',rpm./1000,U2,'b',rpm./1000,U3,'c',rpm./1000,U4,'m',rpm./1000,U5,'r',rpm./1000,U8,'g');
 title('Part 2: Station Velocity vs Spool Speed');
 ylabel('Velocity [m/s]');
 xlabel('Spool Speed [rpm x1000]');
-legend('U02','U03','U04','U05','U08','Location', 'NorthWest');
+legend('U1','U2','U3','U4','U5','U8','Location', 'NorthWest');
 if plotfixing; plotfixer; end
 
 
@@ -250,7 +250,7 @@ if plotfixing; plotfixer; end
 % NOZZLE (5->8): total-to-static
 
 Pin_compressor = find_dh_mix( T02,T03,phi );
-Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
+%Pout_turbine_project3 = find_dh_mix( T04,T05,phi );
 
 % Compressor Outlet
 T03s = applyIsentropicTempVar( T02, P03./P02 );       % tt
@@ -261,17 +261,6 @@ T05s = applyIsentropicTempVar_mix( T04, P05./P04, phi );   % tt
 % Nozzle
 T8s = applyIsentropicTempVar_mix( T05, P8./P05, phi );     % ts
 
-f_temp = @(x) sp_heats(x); %Note: Cp is the first element in the return of sp_heats and this returns just cp as a 1x1 double
-f_temp_mix = @(x) sp_heats_mix(x,phi);
-n_compressor = zeros(length(T02),1);
-n_turbine =    zeros(length(T02),1);
-n_nozzle =     zeros(length(T02),1);
-for i = 1:length(T02)    
-    n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
-    %n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
-    n_turbine(i) =    Pout_turbine_project3(i)/integral( f_temp_mix,T05s(i),T04(i) );
-    n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
-end
 
 P0ratio_combustor = P04./P03;
 
@@ -308,7 +297,7 @@ n_nozzle =     zeros(length(T02),1);
 for i = 1:length(T02)    
     n_compressor(i) = integral( f_temp,T02(i),T03s(i) )/integral( f_temp,T02(i),T03(i) );
     %n_turbine(i) =    integral( f_temp_mix,T05(i),T04(i) )/integral( f_temp_mix,T05s(i),T04(i) );
-    n_turbine(i) =    -Pout_turbine_project3(i)/integral( f_temp_mix,T05s(i),T04(i) );
+    n_turbine(i) =    -Pout_turbine_project3(i)/Qdot(i,1);
     n_nozzle(i) = (.5.*U8(i).^2)./integral( f_temp_mix,T8s(i),T05(i) );
 end
 
@@ -367,10 +356,11 @@ if plotfixing; plotfixer; end
 % ------------
 % Adiabatic Flame Temp as a Function of Phi
 figure(14)
-plot(phi_range, TP_part2,'b');
+plot(phi_range, TP_part2);
 xlabel('Equivalence Ratio, \phi');
 ylabel('Adiabatic Flame Temperature, Tp [K]');
 title('Adiabatic Flame Temp as a Function of Phi');
+legend('Jet-A','Dodecane', 'Location', 'SouthEast');
 if plotfixing; plotfixer; end
 %NOTE TODO Are we supposed to plot some other things with dodecane and
 %other stuff?

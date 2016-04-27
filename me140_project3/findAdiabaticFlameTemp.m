@@ -25,7 +25,7 @@ G_to_KG = .001;
 % Find Formation Enthalpy (ASSUME: phi = 1, LEC 5,SLIDE 24) 
 % ---------------------------------------------------------
 dh_jetA = 0; %assumption
-Q = (LHV(1)*G_to_KG)*Mfuel;
+Q = (LHV*G_to_KG)*Mfuel;
 hf_jetA = -dh_jetA + 12.3*h_co2 + 11.1*h_h2o + Q; % enthaply of formation, jetA
 
 % Find Adiabatic Flame Temperature (ASSUME: phi = linspace, Q = 0, LEC 5,SLIDE 8)
@@ -49,26 +49,28 @@ sum = N * hf'; %intentional matrix multiplication multiplies and sums as desired
 % Solve for Tp (ASSUME: Q = 0, adiabatic)
 % LHS: hf_jetA + dh_jetA - sum( N(i)*hf(i) )
 % RHS: integral[ sum( Cp(i)(T')dT') ] from T0 to Tp + Q
-LHS = phi*hf_jetA + dh_jetA - sum;
-T2f = zeros(length(phi),1);
+LHS = phi*hf_jetA + dh_jetA - [sum,sum];
+T2f = zeros(length(phi),length(hf_jetA));
+for l = 1:length(hf_jetA)
 parfor p = 1:length(phi)
     % Initializations
     T1 = T0;
     T2 = T1 + .01;
     
     RHS = find_dh_mix(T1,T2,phi(p));
-    diff = RHS - LHS(p); %not correct, needs n_dot
+    diff = RHS - LHS(p,l); %not correct, needs n_dot
     iterations = 0;
     
     % modeled after applyIsentropicTempVar from Project #1
     while(abs(diff) > error)
         T2 = T2 - diff./speedFactor;
         RHS = find_dh_mix(T1,T2,phi(p));
-        diff = RHS - LHS(p);
+        diff = RHS - LHS(p,l);
         iterations = iterations + 1;
     end
     iterations;
-    T2f(p) = T2;
+    T2f(p,l) = T2;
+end
 end
     
 end
